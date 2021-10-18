@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Sortir.com.iml" filepath="$PROJECT_DIR$/.idea/Sortir.com.iml" />
+      <module fileurl="file://$USER_HOME$/Downloads/tp-module5-correction-bucket-list/bucket-list/.idea/bucket-list.iml" filepath="$USER_HOME$/Downloads/tp-module5-correction-bucket-list/bucket-list/.idea/bucket-list.iml" />
+      <module fileurl="file://$USER_HOME$/Downloads/la_chocolatine_website/la_chocolatine_website/.idea/la_chocolatine_website.iml" filepath="$USER_HOME$/Downloads/la_chocolatine_website/la_chocolatine_website/.idea/la_chocolatine_website.iml" />
     </modules>
   </component>
 </project>

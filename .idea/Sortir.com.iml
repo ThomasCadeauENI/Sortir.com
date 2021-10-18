@@ -136,5 +136,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="bucket-list" />
+    <orderEntry type="module" module-name="la_chocolatine_website" />
   </component>
 </module>
