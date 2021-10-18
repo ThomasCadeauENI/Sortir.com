@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SortieController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="container mt-4">
+    <div class="col-md-3 ml-md-auto mb-4">
+        <strong>Date du jour XX/XX/XXX</strong>
+        <strong>Participant(e) : Monsieur X</strong>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <strong>Filtrer les sorties</strong>
+            <div>
+                <div class="row">
+                    <div class="col">Site : </div>
+                    <div class="col">Dropdownlist</div>
+                </div>
+                <div class="row">
+                    <div class="col">Le nom de la sortie contient : </div>
+                    <div class="col">input</div>
+                </div>
+                <div class="row col">
+                    <p class="mr-1">Entre : </p>
+                    <input type="date" id="start" name="trip-start"
+                           value="2018-07-22"
+                           min="2018-01-01" max="2018-12-31">
+                    <p class="ml-3 mr-3"> et </p>
+                    <input type="date" id="start" name="trip-end"
+                           value="2018-07-22"
+                           min="2018-01-01" max="2018-12-31">
+                </div>
+            </div>
+        </div>
+        <div class="col-4" style="overflow: auto">
+            <div class="">
+                <nobr>
+                    <input type="checkbox" id="orga" name="orga">
+                    <label for="orga">Sorties dont je suis l'organisateur/trice</label>
+                </nobr>
+            </div>
+            <div class="">
+                <nobr>
+                    <input type="checkbox" id="inscrit" name="inscrit">
+                    <label for="inscrit">Sorties auxquelles je suis inscrit/e</label>
+                </nobr>
+            </div>
+            <div style="">
+                <nobr>
+                    <input type="checkbox" id="noninscrit" name="noninscrit">
+                    <label for="noninscrit">Sorties auxquelles je ne suis pas inscrit/e</label>
+                </nobr>
+            </div>
+            <div class="">
+                <nobr>
+                    <input type="checkbox" id="sortiesPasse" name="sortiesPasse">
+                    <label for="sortiesPasse">Sorties passées</label>
+                </nobr>
+            </div>
+        </div>
+        <div class="col-2">
+            <button class="button btn-primary btn-lg mt-4">RECHERCHER</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
