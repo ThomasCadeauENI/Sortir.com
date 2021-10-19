@@ -9,10 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-
 /**
  * @ORM\Entity(repositoryClass=UtilisateurRepository::class)
- * @UniqueEntity(fields={"email"}, message="Cette email existe déjà pour un compte.")
+ * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  */
 class Utilisateur implements UserInterface
 {
@@ -29,30 +28,25 @@ class Utilisateur implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $pseudo;
-
-    /**
      * @ORM\Column(type="json")
      */
     private $roles = [];
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $prenom;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $nom;
-
-    /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private $mot_de_passe;
+    private $password;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $pseudo;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -70,7 +64,7 @@ class Utilisateur implements UserInterface
     private $photo;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Sortie::class, mappedBy="participants")
+     * @ORM\ManyToMany(targetEntity=Sortie::class, inversedBy="participants")
      */
     private $sorties;
 
@@ -130,12 +124,12 @@ class Utilisateur implements UserInterface
      */
     public function getPassword(): string
     {
-        return $this->mot_de_passe;
+        return $this->password;
     }
 
-    public function setPassword(string $mot_de_passe): self
+    public function setPassword(string $password): self
     {
-        $this->mot_de_passe = $mot_de_passe;
+        $this->password = $password;
 
         return $this;
     }
@@ -160,7 +154,12 @@ class Utilisateur implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function setUsername(string $pseudo): self
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
 
@@ -175,18 +174,6 @@ class Utilisateur implements UserInterface
     public function setPrenom(string $prenom): self
     {
         $this->prenom = $prenom;
-
-        return $this;
-    }
-
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): self
-    {
-        $this->nom = $nom;
 
         return $this;
     }
@@ -208,7 +195,7 @@ class Utilisateur implements UserInterface
         return $this->num_tel;
     }
 
-    public function setNumTel(string $num_tel): self
+    public function setNumTel(?string $num_tel): self
     {
         $this->num_tel = $num_tel;
 
@@ -228,29 +215,28 @@ class Utilisateur implements UserInterface
     }
 
     /**
-     * @return Collection|Sortie[]
+     * @return Collection|sortie[]
      */
     public function getSorties(): Collection
     {
         return $this->sorties;
     }
 
-    public function addSorty(Sortie $sorty): self
+    public function addSorty(sortie $sorty): self
     {
         if (!$this->sorties->contains($sorty)) {
             $this->sorties[] = $sorty;
-            $sorty->addParticipant($this);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): self
+    public function removeSorty(sortie $sorty): self
     {
-        if ($this->sorties->removeElement($sorty)) {
-            $sorty->removeParticipant($this);
-        }
+        $this->sorties->removeElement($sorty);
 
         return $this;
     }
+
+
 }
