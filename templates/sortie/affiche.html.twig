@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4">
+        <table>
+            <tr>
+                <th>Nom de la sortie</th>
+                <th>Date de la sortie</th>
+                <th>CLôture</th>
+                <th>Inscrits/places</th>
+                <th>Etat</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+            </tr>
+            <tr>
+                    <td></td>
+                    <td>{{ sortie.date_sortie|date("m/d/Y") }}</td>
+                    <td>{{ sortie.date_fin_inscription }}</td>
+                    <td>{{ sortie.participants|length }}/{{ sortie.nbplace }}</td>
+                    <td>
+                        {% if sortie.id in user.sorties %}
+                            <span>X</span>
+                        {% endif %}
+                    </td>
+                    <td> {{ sorite.organisateur.prenom }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
