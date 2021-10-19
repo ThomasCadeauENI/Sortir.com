@@ -6,11 +6,15 @@ use App\Repository\UtilisateurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
+
 
 /**
  * @ORM\Entity(repositoryClass=UtilisateurRepository::class)
+ * @UniqueEntity(fields={"email"}, message="Cette email existe déjà pour un compte.")
  */
-class Utilisateur
+class Utilisateur implements UserInterface
 {
     /**
      * @ORM\Id
@@ -20,7 +24,7 @@ class Utilisateur
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=180, unique=true)
      */
     private $email;
 
@@ -28,6 +32,11 @@ class Utilisateur
      * @ORM\Column(type="string", length=255)
      */
     private $pseudo;
+
+    /**
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -40,7 +49,8 @@ class Utilisateur
     private $nom;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @var string The hashed password
+     * @ORM\Column(type="string")
      */
     private $mot_de_passe;
 
@@ -86,12 +96,71 @@ class Utilisateur
         return $this;
     }
 
-    public function getPseudo(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
     {
-        return $this->pseudo;
+        return (string) $this->email;
     }
 
-    public function setPseudo(string $pseudo): self
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getPassword(): string
+    {
+        return $this->mot_de_passe;
+    }
+
+    public function setPassword(string $mot_de_passe): self
+    {
+        $this->mot_de_passe = $mot_de_passe;
+
+        return $this;
+    }
+
+    /**
+     * Returning a salt is only needed, if you are not using a modern
+     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
+     *
+     * @see UserInterface
+     */
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    public function setUsername(string $pseudo): self
     {
         $this->pseudo = $pseudo;
 
@@ -122,18 +191,6 @@ class Utilisateur
         return $this;
     }
 
-    public function getMotDePasse(): ?string
-    {
-        return $this->mot_de_passe;
-    }
-
-    public function setMotDePasse(string $mot_de_passe): self
-    {
-        $this->mot_de_passe = $mot_de_passe;
-
-        return $this;
-    }
-
     public function getVille(): ?string
     {
         return $this->ville;
@@ -151,7 +208,7 @@ class Utilisateur
         return $this->num_tel;
     }
 
-    public function setNumTel(?string $num_tel): self
+    public function setNumTel(string $num_tel): self
     {
         $this->num_tel = $num_tel;
 
