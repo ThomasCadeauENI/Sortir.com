@@ -2,39 +2,39 @@
 
 namespace App\Controller;
 
-use App\Entity\Sortie;
-use App\Entity\Utilisateur;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Date;
+use App\Form\SortieType;
 
+#[Route('/sortie', 'sortie_')]
 class SortieController extends AbstractController
 {
-    #[Route('/sortie', 'sortie')]
-    public function index(): Response
-    {
-        return $this->render('sortie/index.html.twig', [
-            'controller_name' => 'SortieController',
-        ]);
+    #[Route('/', '')]
+    public function index(Request $request): Response {
+        $sortie = new Sortie();
+
+        $form = $this->createForm(SortieType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            dump($sortie);die;
+        }
+        return $this->render('sortie/index.html.twig');
     }
 
-    #[Route('/affiche', 'affiche')]
-    public function affiche(): Response
-    {
+    #[Route('/creer', 'creer')]
+    public function creer_sortie(Request $request, EntityManagerInterface $entityManager): Response {
         $sortie = new Sortie();
-        $user = new Utilisateur();
-        $user->setPrenom("qsd");
 
-        $sortie->setDateSortie(new \DateTime());
-        $sortie->setDateFinInscription(new \DateTime());
-        $sortie->setDescription("SDqqsdqdq");
-        $sortie->setNbPlace(321);
+        $form = $this->createForm(SortieType::class);
 
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
 
-        return $this->render('sortie/affiche.html.twig', [
-            'user' => $user,
-            'sortie' => $sortie
-        ]);
+        return $this->render ('sortie/creer_sortie.html.twig');
     }
 }
