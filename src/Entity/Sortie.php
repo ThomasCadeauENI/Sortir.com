@@ -20,7 +20,7 @@ class Sortie
     private $id;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $date_sortie;
 
@@ -60,6 +60,22 @@ class Sortie
      * @ORM\ManyToMany(targetEntity=utilisateur::class, inversedBy="sorties")
      */
     private $participants;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $nom;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $etat;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=utilisateur::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $organisateur;
 
     public function __construct()
     {
@@ -175,6 +191,42 @@ class Sortie
     public function removeParticipant(utilisateur $participant): self
     {
         $this->participants->removeElement($participant);
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(string $etat): self
+    {
+        $this->etat = $etat;
+
+        return $this;
+    }
+
+    public function getOrganisateur(): ?utilisateur
+    {
+        return $this->organisateur;
+    }
+
+    public function setOrganisateur(?utilisateur $organisateur): self
+    {
+        $this->organisateur = $organisateur;
 
         return $this;
     }
