@@ -30,7 +30,7 @@ class Ville
     private $code_postal;
 
     /**
-     * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="ville")
+     * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="id_ville")
      */
     private $sorties;
 
@@ -80,7 +80,7 @@ class Ville
     {
         if (!$this->sorties->contains($sorty)) {
             $this->sorties[] = $sorty;
-            $sorty->setVille($this);
+            $sorty->setIdVille($this);
         }
 
         return $this;
@@ -90,8 +90,8 @@ class Ville
     {
         if ($this->sorties->removeElement($sorty)) {
             // set the owning side to null (unless already changed)
-            if ($sorty->getVille() === $this) {
-                $sorty->setVille(null);
+            if ($sorty->getIdVille() === $this) {
+                $sorty->setIdVille(null);
             }
         }
 
