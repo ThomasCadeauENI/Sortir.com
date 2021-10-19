@@ -20,7 +20,7 @@ class Sortie
     private $id;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $date_sortie;
 
@@ -45,13 +45,13 @@ class Sortie
     private $description;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Ville::class, inversedBy="sorties")
+     * @ORM\ManyToOne(targetEntity=ville::class, inversedBy="sorties")
      * @ORM\JoinColumn(nullable=false)
      */
     private $id_ville;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Lieu::class, inversedBy="sorties")
+     * @ORM\ManyToOne(targetEntity=lieu::class, inversedBy="sorties")
      * @ORM\JoinColumn(nullable=false)
      */
     private $id_lieu;
@@ -60,6 +60,22 @@ class Sortie
      * @ORM\ManyToMany(targetEntity=Utilisateur::class, mappedBy="sorties")
      */
     private $participants;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $nom;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $etat;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=utilisateur::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $organisateur;
 
     public function __construct()
     {
@@ -112,7 +128,7 @@ class Sortie
         return $this->duree;
     }
 
-    public function setDuree(?int $duree): self
+    public function setDuree(int $duree): self
     {
         $this->duree = $duree;
 
@@ -124,7 +140,7 @@ class Sortie
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
@@ -178,6 +194,42 @@ class Sortie
         if ($this->participants->removeElement($participant)) {
             $participant->removeSorty($this);
         }
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(string $etat): self
+    {
+        $this->etat = $etat;
+
+        return $this;
+    }
+
+    public function getOrganisateur(): ?utilisateur
+    {
+        return $this->organisateur;
+    }
+
+    public function setOrganisateur(utilisateur $organisateur): self
+    {
+        $this->organisateur = $organisateur;
 
         return $this;
     }
