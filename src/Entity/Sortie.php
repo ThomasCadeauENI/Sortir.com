@@ -57,7 +57,7 @@ class Sortie
     private $id_lieu;
 
     /**
-     * @ORM\ManyToMany(targetEntity=utilisateur::class, inversedBy="sorties")
+     * @ORM\ManyToMany(targetEntity=Utilisateur::class, mappedBy="sorties")
      */
     private $participants;
 
@@ -172,25 +172,28 @@ class Sortie
     }
 
     /**
-     * @return Collection|utilisateur[]
+     * @return Collection|Utilisateur[]
      */
     public function getParticipants(): Collection
     {
         return $this->participants;
     }
 
-    public function addParticipant(utilisateur $participant): self
+    public function addParticipant(Utilisateur $participant): self
     {
         if (!$this->participants->contains($participant)) {
             $this->participants[] = $participant;
+            $participant->addSorty($this);
         }
 
         return $this;
     }
 
-    public function removeParticipant(utilisateur $participant): self
+    public function removeParticipant(Utilisateur $participant): self
     {
-        $this->participants->removeElement($participant);
+        if ($this->participants->removeElement($participant)) {
+            $participant->removeSorty($this);
+        }
 
         return $this;
     }
