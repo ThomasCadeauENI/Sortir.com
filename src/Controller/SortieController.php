@@ -27,19 +27,34 @@ class SortieController extends AbstractController
     }
 
     #[Route('/creer', 'creer')]
-    public function creer_sortie(Request $request, EntityManagerInterface $entityManager): Response {
+    public function creer_sortie(Request $request): Response
+    {
         $sortie = new Sortie();
 
         $form = $this->createForm(SortieType::class, $sortie);
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()){
-            $entityManager->persist($form);
-            $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $sortie->setEtat('NC');
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($sortie);
+            $em->flush();
         }
 
-        return $this->render ('sortie/creer_sortie.html.twig', [
+        return $this->render('sortie/creer_sortie.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    #[Route('/creer', 'creer')]
+    public function afficher(Request $request, $id): Response{
+
+        $sortie = $this->getDoctrine()->getRepository(Sortie::class)->find($id);
+
+        return $this->render('sortie/affiche.html.twig', [
+            'sortie' => $sortie
         ]);
     }
 }
