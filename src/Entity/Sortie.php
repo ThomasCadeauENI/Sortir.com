@@ -224,7 +224,7 @@ class Sortie
         return $this->organisateur;
     }
 
-    public function setOrganisateur(?utilisateur $organisateur): self
+    public function setOrganisateur(utilisateur $organisateur): self
     {
         $this->organisateur = $organisateur;
 
