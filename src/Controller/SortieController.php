@@ -27,14 +27,16 @@ class SortieController extends AbstractController
     public function creer_sortie(Request $request, EntityManagerInterface $entityManager): Response {
         $sortie = new Sortie();
 
-        $form = $this->createForm(SortieType::class);
+        $form = $this->createForm(SortieType::class, $sortie);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
-            $entityManager->persist($user);
+            $entityManager->persist($form);
             $entityManager->flush();
         }
 
-        return $this->render ('sortie/creer_sortie.html.twig');
+        return $this->render ('sortie/creer_sortie.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }
