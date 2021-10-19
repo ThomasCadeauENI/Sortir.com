@@ -13,8 +13,8 @@
                 <th>Organisateur</th>
             </tr>
             <tr>
-                    <td>{{ sortie.nom }}</td>
-                    <td>{{ sortie.date_sortie }}</td>
+                    <td></td>
+                    <td>{{ sortie.date_sortie|date("m/d/Y") }}</td>
                     <td>{{ sortie.date_fin_inscription }}</td>
                     <td>{{ sortie.participants|length }}/{{ sortie.nbplace }}</td>
                     <td>
@@ -22,7 +22,7 @@
                             <span>X</span>
                         {% endif %}
                     </td>
-                    <td>{{ sortie.organisateur.nom }} {{ sorite.organisateur.prenom }}</td>
+                    <td> {{ sorite.organisateur.prenom }}</td>
             </tr>
         </table>
     </div>
