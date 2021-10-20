@@ -13,7 +13,9 @@ use App\Form\SortieType;
 #[Route('/sortie', 'sortie_')]
 class SortieController extends AbstractController
 {
-    #[Route('/', '')]
+    /**
+     * @Route ("/", name="homepage")
+     */
     public function index(Request $request): Response {
         $sortie = new Sortie();
 
