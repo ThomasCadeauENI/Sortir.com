@@ -57,4 +57,9 @@ class SortieController extends AbstractController
             'sortie' => $sortie
         ]);
     }
+
+    #[Route('/profil', 'profil')]
+    public function profil(){
+        return $this->render ('utilisateur/profil.html.twig');
+    }
 }
