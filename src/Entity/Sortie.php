@@ -45,19 +45,19 @@ class Sortie
     private $description;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ville::class, inversedBy="sorties")
+     * @ORM\ManyToOne(targetEntity=Ville::class, inversedBy="sorties")
      * @ORM\JoinColumn(nullable=false)
      */
     private $id_ville;
 
     /**
-     * @ORM\ManyToOne(targetEntity=lieu::class, inversedBy="sorties")
+     * @ORM\ManyToOne(targetEntity=Lieu::class, inversedBy="sorties")
      * @ORM\JoinColumn(nullable=false)
      */
     private $id_lieu;
 
     /**
-     * @ORM\ManyToMany(targetEntity=utilisateur::class, inversedBy="sorties")
+     * @ORM\ManyToMany(targetEntity=Utilisateur::class, inversedBy="sorties")
      */
     private $participants;
 
@@ -76,6 +76,11 @@ class Sortie
      * @ORM\JoinColumn(nullable=false)
      */
     private $organisateur;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $motif;
 
     public function __construct()
     {
@@ -172,25 +177,28 @@ class Sortie
     }
 
     /**
-     * @return Collection|utilisateur[]
+     * @return Collection|Utilisateur[]
      */
     public function getParticipants(): Collection
     {
         return $this->participants;
     }
 
-    public function addParticipant(utilisateur $participant): self
+    public function addParticipant(Utilisateur $participant): self
     {
         if (!$this->participants->contains($participant)) {
             $this->participants[] = $participant;
+            $participant->addSorty($this);
         }
 
         return $this;
     }
 
-    public function removeParticipant(utilisateur $participant): self
+    public function removeParticipant(Utilisateur $participant): self
     {
-        $this->participants->removeElement($participant);
+        if ($this->participants->removeElement($participant)) {
+            $participant->removeSorty($this);
+        }
 
         return $this;
     }
@@ -227,6 +235,18 @@ class Sortie
     public function setOrganisateur(utilisateur $organisateur): self
     {
         $this->organisateur = $organisateur;
+
+        return $this;
+    }
+
+    public function getMotif(): ?string
+    {
+        return $this->motif;
+    }
+
+    public function setMotif(?string $motif): self
+    {
+        $this->motif = $motif;
 
         return $this;
     }
