@@ -77,6 +77,11 @@ class Sortie
      */
     private $organisateur;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $motif;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -230,6 +235,18 @@ class Sortie
     public function setOrganisateur(utilisateur $organisateur): self
     {
         $this->organisateur = $organisateur;
+
+        return $this;
+    }
+
+    public function getMotif(): ?string
+    {
+        return $this->motif;
+    }
+
+    public function setMotif(?string $motif): self
+    {
+        $this->motif = $motif;
 
         return $this;
     }
