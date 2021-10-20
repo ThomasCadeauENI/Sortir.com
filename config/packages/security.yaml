@@ -4,17 +4,17 @@ security:
       algorithm: auto
 
   providers:
-    # used to reload user from session & other features (e.g. switch_user)
     app_user_provider:
       entity:
         class: App\Entity\Utilisateur
-        property: email
+
 
   firewalls:
     dev:
         pattern: ^/(_(profiler|wdt)|css|images|js)/
         security: false
     main:
+        entity: { class: My\UserBundle\Entity\User ,property : username}
         anonymous: true
         lazy: true
         provider: app_user_provider
@@ -37,8 +37,9 @@ security:
       # switch_user: true
   access_control:
     - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/orgnaisateur, roles: ROLE_ORGA}
     - { path: ^/profil, roles: ROLE_USER }
 
   role_hierarchy:
-    ROLE_EDITOR: ROLE_USER
-    ROLE_ADMIN: ROLE_EDITOR
+    ROLE_ORGA : ROLE_USER
+    ROLE_ADMIN : ROLE_ORGA
