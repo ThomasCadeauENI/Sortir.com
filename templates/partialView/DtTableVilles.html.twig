@@ -1,0 +1,22 @@
+<table class="table">
+    <tr>
+        <th>Ville</th>
+        <th>Code Postal</th>
+        <th>Actions</th>
+    </tr>
+    <tr>
+        {% for ville in villes %}
+            <td>ville.nom</td>
+            <td>ville.code_postal</td>
+            <td>
+                <a>Modifier</a>
+                <a> - Supprimer</a>
+            </td>
+        {% endfor %}
+        <td><input type="text" id="nom"></td>
+        <td><input type="text" id="codepostal"></td>
+        <td>
+            <a>Ajouter</a>
+        </td>
+    </tr>
+</table>
