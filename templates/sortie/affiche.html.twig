@@ -2,28 +2,99 @@
 
 {% block body %}
     <div class="container mt-4">
-        <table>
-            <tr>
-                <th>Nom de la sortie</th>
-                <th>Date de la sortie</th>
-                <th>CLôture</th>
-                <th>Inscrits/places</th>
-                <th>Etat</th>
-                <th>Inscrit</th>
-                <th>Organisateur</th>
-            </tr>
-            <tr>
-                    <td></td>
-                    <td>{{ sortie.date_sortie|date("m/d/Y") }}</td>
-                    <td>{{ sortie.date_fin_inscription }}</td>
-                    <td>{{ sortie.participants|length }}/{{ sortie.nbplace }}</td>
-                    <td>
-                        {% if sortie.id in user.sorties %}
-                            <span>X</span>
-                        {% endif %}
-                    </td>
-                    <td> {{ sortie.organisateur.prenom }}</td>
-            </tr>
-        </table>
+        <div class="text-center mb-5"><h2>Afficher une sortie</h2></div>
+        <div class="row col mb-5">
+            <div class="col-6">
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Nom de la sortie : </div>
+                        <div class="col-6">sortie.nom</div>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Date et heure de la sortie : </div>
+                        <div class="col-6">sortie.date_sortie</div>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Date limite inscription : </div>
+                        <div class="col-6">sortie.date_fin_inscription</div>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Nombre de place : </div>
+                        <div class="col-6">sortie.participants|length / sortie.nb_place</div>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Durée : </div>
+                        <div class="col-6">sortie.duree minutes</div>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Descripiton et infos : </div>
+                        <div class="col-6">sortie.nom</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Ville organisatrice : </div>
+                        <div class="col-6">sortie.id_ville.nom</div>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Lieu : </div>
+                        <div class="col-6">sortie.id_lieu.nom</div>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Rue : </div>
+                        <div class="col-6">sortie.id_lieu.rue</div>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Code postal : </div>
+                        <div class="col-6">sortie.id_lieu.code_postal</div>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Longitude : </div>
+                        <div class="col-6">sortie.id_lieu.longitude</div>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <div class="row">
+                        <div class="col-6">Latitude : </div>
+                        <div class="col-6">sortie.id_lieu.latitude</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ml-3">
+        <strong>Liste des participants inscrits :</strong>
+        <div class="col-3" style="overflow: auto; height: 200px">
+            <table class="table">
+                <tr>
+                    <th>Pseudo</th>
+                    <th>Nom</th>
+                </tr>
+                <tr>
+                    <td>Alfreds Futterkiste</td>
+                    <td>Maria Anders</td>
+                </tr>
+            </table>
+        </div>
     </div>
 {% endblock %}
