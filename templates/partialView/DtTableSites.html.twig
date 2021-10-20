@@ -1,0 +1,19 @@
+<table class="table">
+    <tr>
+        <th>Ville</th>
+        <th>Actions</th>
+    </tr>
+    <tr>
+        {% for lieu in lieux %}
+            <td>lieu.nom</td>
+            <td>
+                <a>Modifier</a>
+                <a> - Supprimer</a>
+            </td>
+        {% endfor %}
+        <td><input type="text" id="nom"></td>
+        <td>
+            <a>Ajouter</a>
+        </td>
+    </tr>
+</table>
