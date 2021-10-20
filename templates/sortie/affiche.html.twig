@@ -8,37 +8,37 @@
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Nom de la sortie : </div>
-                        <div class="col-6">sortie.nom</div>
+                        <div class="col-6">{{ sortie.nom }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Date et heure de la sortie : </div>
-                        <div class="col-6">sortie.date_sortie</div>
+                        <div class="col-6">{{ sortie.DateSortie|date("d-m-Y H:i") }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Date limite inscription : </div>
-                        <div class="col-6">sortie.date_fin_inscription</div>
+                        <div class="col-6">{{ sortie.DateFinInscription|date("d-m-Y H:i") }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Nombre de place : </div>
-                        <div class="col-6">sortie.participants|length / sortie.nb_place</div>
+                        <div class="col-6">{{ sortie.NbPlace }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Durée : </div>
-                        <div class="col-6">sortie.duree minutes</div>
+                        <div class="col-6">{{ sortie.duree }} minutes</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Descripiton et infos : </div>
-                        <div class="col-6">sortie.nom</div>
+                        <div class="col-6">{{ sortie.description }}</div>
                     </div>
                 </div>
             </div>
@@ -46,54 +46,60 @@
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Ville organisatrice : </div>
-                        <div class="col-6">sortie.id_ville.nom</div>
+                        <div class="col-6">{{ ville.nom }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Lieu : </div>
-                        <div class="col-6">sortie.id_lieu.nom</div>
+                        <div class="col-6">{{ lieu.nom }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Rue : </div>
-                        <div class="col-6">sortie.id_lieu.rue</div>
+                        <div class="col-6">{{ lieu.rue }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Code postal : </div>
-                        <div class="col-6">sortie.id_lieu.code_postal</div>
+                        <div class="col-6">{{ lieu.CodePostal }}</div>
                     </div>
                 </div>
+                {% if lieu.longitude%}
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Longitude : </div>
-                        <div class="col-6">sortie.id_lieu.longitude</div>
+                        <div class="col-6">{{ lieu.longitude }}</div>
                     </div>
                 </div>
+                {% endif %}
+                {% if lieu.latitude %}
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Latitude : </div>
-                        <div class="col-6">sortie.id_lieu.latitude</div>
+                        <div class="col-6">{{ lieu.latitude }}</div>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
     <div class="ml-3">
-        <strong>Liste des participants inscrits :</strong>
+        <strong>Liste des participants inscrits (TODO/{{ sortie.NbPlace }}):</strong>
         <div class="col-3" style="overflow: auto; height: 200px">
             <table class="table">
-                <tr>
-                    <th>Pseudo</th>
-                    <th>Nom</th>
-                </tr>
-                <tr>
-                    <td>Alfreds Futterkiste</td>
-                    <td>Maria Anders</td>
-                </tr>
+                {% if participants|length %}
+                    <tr>
+                        <th>Pseudo</th>
+                    </tr>
+                    {% for p in participants %}
+                    <tr>
+                        <td>{{ p }}</td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
             </table>
         </div>
     </div>

@@ -22,17 +22,7 @@ class Lieu
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $nom;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $rue;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $code_postal;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -44,32 +34,21 @@ class Lieu
      */
     private $longitude;
 
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $code_postal;
 
-    public function setNom(string $nom): self
-    {
-        $this->nom = $nom;
-        return $this;
-    }
+    /**
+     * @ORM\ManyToOne(targetEntity=Ville::class, inversedBy="lieus")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $id_ville;
 
-    public function getCodePostal(): ?string
-    {
-        return $this->code_postal;
-    }
-
-    public function setCodePostal(string $code_postal): self
-    {
-        $this->code_postal = $code_postal;
-        return $this;
-    }
-
-    public function __construct()
-    {
-        $this->sorties = new ArrayCollection();
-    }
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $nom;
 
     public function getId(): ?int
     {
@@ -112,32 +91,38 @@ class Lieu
         return $this;
     }
 
-    /**
-     * @return Collection|Sortie[]
-     */
-    public function getSorties(): Collection
+    public function getCodePostal(): ?string
     {
-        return $this->sorties;
+        return $this->code_postal;
     }
 
-    public function addSorty(Sortie $sorty): self
+    public function setCodePostal(string $code_postal): self
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties[] = $sorty;
-            $sorty->setIdLieu($this);
-        }
+        $this->code_postal = $code_postal;
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): self
+    public function getIdVille(): ?Ville
     {
-        if ($this->sorties->removeElement($sorty)) {
-            // set the owning side to null (unless already changed)
-            if ($sorty->getIdLieu() === $this) {
-                $sorty->setIdLieu(null);
-            }
-        }
+        return $this->id_ville;
+    }
+
+    public function setIdVille(?Ville $id_ville): self
+    {
+        $this->id_ville = $id_ville;
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
 
         return $this;
     }

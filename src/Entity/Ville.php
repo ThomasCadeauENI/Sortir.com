@@ -25,13 +25,13 @@ class Ville
     private $nom;
 
     /**
-     * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="id_ville")
+     * @ORM\OneToMany(targetEntity=Lieu::class, mappedBy="id_ville")
      */
-    private $sorties;
+    private $lieus;
 
     public function __construct()
     {
-        $this->sorties = new ArrayCollection();
+        $this->lieus = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -51,34 +51,34 @@ class Ville
         return $this;
     }
 
-
     /**
-     * @return Collection|Sortie[]
+     * @return Collection|Lieu[]
      */
-    public function getSorties(): Collection
+    public function getLieus(): Collection
     {
-        return $this->sorties;
+        return $this->lieus;
     }
 
-    public function addSorty(Sortie $sorty): self
+    public function addLieu(Lieu $lieu): self
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties[] = $sorty;
-            $sorty->setIdVille($this);
+        if (!$this->lieus->contains($lieu)) {
+            $this->lieus[] = $lieu;
+            $lieu->setIdVille($this);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): self
+    public function removeLieu(Lieu $lieu): self
     {
-        if ($this->sorties->removeElement($sorty)) {
+        if ($this->lieus->removeElement($lieu)) {
             // set the owning side to null (unless already changed)
-            if ($sorty->getIdVille() === $this) {
-                $sorty->setIdVille(null);
+            if ($lieu->getIdVille() === $this) {
+                $lieu->setIdVille(null);
             }
         }
 
         return $this;
     }
+
 }

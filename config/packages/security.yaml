@@ -31,5 +31,12 @@ security:
 
       # https://symfony.com/doc/current/security/impersonating_user.html
       # switch_user: true
+
   access_control:
     - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/orgnaisateur, roles: ROLE_ORGANISATOR }
+    - { path: ^/profil, roles: ROLE_USER }
+
+  role_hierarchy:
+    ROLE_ORGA: ROLE_USER
+    ROLE_ADMIN : ROLE_ORG

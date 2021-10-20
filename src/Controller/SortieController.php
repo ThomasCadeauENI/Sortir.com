@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Lieu;
 use App\Entity\Sortie;
+use App\Entity\Ville;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,6 +40,9 @@ class SortieController extends AbstractController
 
             $sortie->setEtat('NC');
 
+            /* TODO - RECUP L'ID DE L'ORGA */
+            $sortie->setOrganisateur($this->getUser()->getID());
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
             $em->flush();
@@ -49,12 +54,28 @@ class SortieController extends AbstractController
     }
 
     #[Route('/afficher/{id}', 'afficher')]
-    public function afficher(Request $request, $id): Response{
+    public function afficher(Request $request, Sortie $sortie): Response{
 
-        $sortie = $this->getDoctrine()->getRepository(Sortie::class)->find($id);
+        //Inutile car "Sortie $sortie" dans declaration de fonction
+        //$sortie = $this->getDoctrine()->getRepository(Sortie::class)->find($id);
+        $lieu = $this->getDoctrine()->getRepository(Lieu::class)->find($sortie->getIdLieu());
+        $ville = $this->getDoctrine()->getRepository(Ville::class)->find($lieu->getIdVille());
+
+        /*
+         * Participants []
+         * For utilisateur in sortie_utilisateur where S.id_sortie=U.id_sortie
+         *      Participants.add(utilisateur)
+         *
+         */
+        $participants = $sortie->getParticipants();
+
+        dd($participants);
 
         return $this->render('sortie/affiche.html.twig', [
-            'sortie' => $sortie
+            'sortie' => $sortie,
+            'lieu' => $lieu,
+            'ville' => $ville,
+            'participants' => $participants
         ]);
     }
 
@@ -62,4 +83,5 @@ class SortieController extends AbstractController
     public function profil(){
         return $this->render ('utilisateur/profil.html.twig');
     }
+
 }
