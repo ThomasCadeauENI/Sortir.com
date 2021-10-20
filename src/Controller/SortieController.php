@@ -48,7 +48,7 @@ class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/creer', 'creer')]
+    #[Route('/afficher/{id}', 'afficher')]
     public function afficher(Request $request, $id): Response{
 
         $sortie = $this->getDoctrine()->getRepository(Sortie::class)->find($id);

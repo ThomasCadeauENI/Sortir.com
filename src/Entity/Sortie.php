@@ -45,19 +45,19 @@ class Sortie
     private $description;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ville::class, inversedBy="sorties")
+     * @ORM\ManyToOne(targetEntity=Ville::class, inversedBy="sorties")
      * @ORM\JoinColumn(nullable=false)
      */
     private $id_ville;
 
     /**
-     * @ORM\ManyToOne(targetEntity=lieu::class, inversedBy="sorties")
+     * @ORM\ManyToOne(targetEntity=Lieu::class, inversedBy="sorties")
      * @ORM\JoinColumn(nullable=false)
      */
     private $id_lieu;
 
     /**
-     * @ORM\ManyToMany(targetEntity=utilisateur::class, inversedBy="sorties")
+     * @ORM\ManyToMany(targetEntity=Utilisateur::class, inversedBy="sorties")
      */
     private $participants;
 
