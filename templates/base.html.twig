@@ -19,7 +19,7 @@
     </head>
     <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#"><img src="{{ asset('images/logo.png') }}"></a>
+        <a class="navbar-brand" href="{{ path('homepage') }}"><img style="width: 75%" src="{{ asset('images/logo.png') }}"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -29,25 +29,25 @@
                 <ul class="navbar-nav mr-auto">
                     {% if is_granted('ROLE_ADMIN') %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Villes</a>
+                            <a class="nav-link" href="ville/">Villes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Sites</a>
+                            <a class="nav-link" href="lieu/">Sites</a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Accueil</a>
+                        <a class="nav-link" href="{{ path('homepage') }}">Accueil</a>
                     </li>
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                         <li class="nav-item">
                             <a class="nav-link" href="#">Mon profil</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Se déconnecter</a>
+                            <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
                         </li>
-                    {% elseif  is_granted('IS_AUTHENTICATED_ANONYMOUS') %}
+                    {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Se connecter</a>
+                            <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
                         </li>
                     {% endif %}
 
