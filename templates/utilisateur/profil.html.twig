@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SortieController!{% endblock %}
+
+{% block body %}
+    <div class="">
+        <div class="row">
+            <div class="col-2">
+                <img style="border: 4px solid black; overflow: auto" src="/images/default_profil.png">
+            </div>
+            <div class="col-8" style="overflow: auto">
+                <div class="text-center"><h2>user.pseudo</h2></div>
+                <div class="col-md-6 offset-md-3 ">
+                    <div class="row mb-2">
+                        <div class="col">Prénom : </div>
+                        <div class="col">user.prenom</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">Nom : </div>
+                        <div class="col">user.nom</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">Téléphone : </div>
+                        <div class="col">user.tel</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">Email : </div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">Ville de rattachement : </div>
+                        <div class="col">user.ville</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 offset-md-3 row">
+            <div class="col text-center"><button class="btn btn-primary btn-lg">Retour</button></div>
+        </div>
+    </div>
+{% endblock %}

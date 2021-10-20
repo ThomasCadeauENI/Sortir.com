@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SortieController!{% endblock %}
+
+{% block body %}
+<div class="">
+    <div class="row">
+        <div class="col-2">
+            <img style="border: 4px solid black; overflow: auto" src="/images/default_profil.png">
+        </div>
+        <div class="col-8" style="overflow: auto">
+            <div class="text-center"><h2>Mon profil</h2></div>
+            <div class="col-md-6 offset-md-3 ">
+                <div class="row mb-2">
+                    <div class="col">Mon pseudo : </div>
+                    <div class="col"><input type="text" id="pseudo"></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">Mon prénom : </div>
+                    <div class="col"><input type="text" id="prenom"></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">Mon nom : </div>
+                    <div class="col"><input type="text" id="nom"></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">Mon tel : </div>
+                    <div class="col"><input type="tel" id="tel" pattern="^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,5})|(\(?\d{2,6}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$"></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">Mon email : </div>
+                    <div class="col"><input type="email" id="email"></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">Mot de passe : </div>
+                    <div class="col"><input type="password" id="mdp1"></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">Confirmation : </div>
+                    <div class="col"><input type="password" id="mdp1"></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">Ville de rattachement : </div>
+
+                    <select class="col form-control" name="cars" id="cars">
+                        <option value="volvo">Volvo</option>
+                        <option value="saab">Saab</option>
+                        <option value="mercedes">Mercedes</option>
+                        <option value="audi">Audi</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 offset-md-3 row">
+        <div class="col text-center"><button class="btn btn-primary btn-lg btn-success">Enregistrer</button></div>
+        <div class="col text-center"><button class="btn btn-primary btn-lg btn-danger">Annuler</button></div>
+    </div>
+</div>
+{% endblock %}
