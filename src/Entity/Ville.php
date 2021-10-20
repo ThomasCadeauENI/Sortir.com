@@ -25,11 +25,6 @@ class Ville
     private $nom;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $code_postal;
-
-    /**
      * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="id_ville")
      */
     private $sorties;
@@ -56,17 +51,6 @@ class Ville
         return $this;
     }
 
-    public function getCodePostal(): ?string
-    {
-        return $this->code_postal;
-    }
-
-    public function setCodePostal(string $code_postal): self
-    {
-        $this->code_postal = $code_postal;
-
-        return $this;
-    }
 
     /**
      * @return Collection|Sortie[]

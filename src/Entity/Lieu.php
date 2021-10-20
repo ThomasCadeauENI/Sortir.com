@@ -22,22 +22,49 @@ class Lieu
     /**
      * @ORM\Column(type="string", length=255)
      */
+    private $nom;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
     private $rue;
 
     /**
-     * @ORM\Column(type="float", nullable=true)
+     * @ORM\Column(type="string", length=255)
+     */
+    private $code_postal;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $latitude;
 
     /**
-     * @ORM\Column(type="float", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $longitude;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="id_lieu")
-     */
-    private $sorties;
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
+        return $this;
+    }
+
+    public function getCodePostal(): ?string
+    {
+        return $this->code_postal;
+    }
+
+    public function setCodePostal(string $code_postal): self
+    {
+        $this->code_postal = $code_postal;
+        return $this;
+    }
 
     public function __construct()
     {
@@ -61,24 +88,24 @@ class Lieu
         return $this;
     }
 
-    public function getLatitude(): ?float
+    public function getLatitude(): ?string
     {
         return $this->latitude;
     }
 
-    public function setLatitude(?float $latitude): self
+    public function setLatitude(?string $latitude): self
     {
         $this->latitude = $latitude;
 
         return $this;
     }
 
-    public function getLongitude(): ?float
+    public function getLongitude(): ?string
     {
         return $this->longitude;
     }
 
-    public function setLongitude(?float $longitude): self
+    public function setLongitude(?string $longitude): self
     {
         $this->longitude = $longitude;
 
