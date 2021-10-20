@@ -3,7 +3,7 @@
 {% block title %}Hello SortieController!{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
+<div class="container">
     <div class="col-md-3 ml-md-auto mb-4">
         <strong>Date du jour XX/XX/XXX</strong>
         <strong>Participant(e) : Monsieur X</strong>
@@ -23,13 +23,11 @@
                 <div class="row col" style="white-space: nowrap;">
                     <div class="col row">
                         <p class="mr-2">Entre : </p>
-                        <input type="date" id="start" name="trip-start" value="2018-07-22" min="2018-01-01" max="2018-12-31">
+                        <input type="date" id="start" name="trip-start">
+                        <p class="mr-2"> et </p>
                     </div>
                     <div class="col row">
-                    <p class="ml-3 mr-3"> et </p>
-                        <input type="date" id="start" name="trip-end"
-                               value="2018-07-22"
-                               min="2018-01-01" max="2018-12-31">
+                        <input type="date" id="start" name="trip-end">
                     </div>
                 </div>
             </div>
