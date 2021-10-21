@@ -4,11 +4,10 @@ security:
       algorithm: auto
 
   providers:
-    # used to reload user from session & other features (e.g. switch_user)
     app_user_provider:
       entity:
         class: App\Entity\Utilisateur
-        property: email
+
 
   firewalls:
     dev:
@@ -38,9 +37,9 @@ security:
 
   access_control:
     - { path: ^/admin, roles: ROLE_ADMIN }
-    - { path: ^/orgnaisateur, roles: ROLE_ORGANISATOR }
-    - { path: ^/profil, roles: ROLE_USER }
+    - { path: ^/orgnaisateur, roles: ROLE_ORGA}
+    - { path: ^/utilisateur, roles: ROLE_USER }
 
   role_hierarchy:
-    ROLE_ORGA: ROLE_USER
-    ROLE_ADMIN : ROLE_ORG
+    ROLE_ORGA : ROLE_USER
+    ROLE_ADMIN : ROLE_ORGA

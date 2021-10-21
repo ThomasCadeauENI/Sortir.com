@@ -2,7 +2,7 @@
     <tr>
         <th>Nom de la sortie</th>
         <th>Date de la sortie</th>
-        <th>CLôture</th>
+        <th>Clôture</th>
         <th>Inscrits/places</th>
         <th>Etat</th>
         <th>Inscrit</th>
@@ -12,30 +12,32 @@
     <tr>
         {% for sortie in sorties %}
             <td>{{ sortie.nom }}</td>
-            <td>{{ sortie.date_sortie }}</td>
+            <td>{{ sortie.date_sortie|date("d-m-Y H:i") }}</td>
             <td>{{ sortie.date_fin_inscription }}</td>
-            <td>{{ sortie.participants|length }}/{{ sortie.nbplace }}</td>
+            <td>/{{ sortie.nb_place }}</td>
             <td>
-                {% if sortie.id in user.sorties %}
+                {% if sortie.id in user.id_sorties %}
                 <span>X</span>
                 {% endif %}
             </td>
-            <td>{{ sortie.organisateur.nom }} {{ sorite.organisateur.prenom }}</td>
+            <td>{{ sortie.etat }}</td>
+            <td>d</td>
         <td>
-            <a href="/affiche/{{ sortie.id }}">Afficher</a>
-            {% if sortie.organisateur.id == user.id %}
-                <a> - Annuler</a>
+            <a href="{{ path('afficher_sortie',{ 'id': sortie.id }) }}">Afficher</a>
+            {% if sortie.organisateur_id == app.user.id %}
+                <a href="{{  path('afficher_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
             {% else %}
                 {% if sortie.etat != "En création" and date(sortie.date_sortie) < date() and sortie.id in user.sorties %}
                     <a> - Se désister</a>
                 {% elseif sortie.etat != "En création" and date(sortie.date_fin_inscription) < date() and sortie.id not in user.sorties%}
                     <a> - S'inscrire</a>
+                {% endif %}
+
                 {% if sortie.etat == "En création" %}
                     <a>Modifier</a>
                     <a> - Publier</a>
                 {% endif %}
             {% endif %}
-
             </td>
         {% endfor %}
     </tr>

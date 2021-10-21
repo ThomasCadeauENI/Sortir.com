@@ -13,23 +13,27 @@
             <div class="col-md-6 offset-md-3 ">
                 <div class="row mb-2">
                     <div class="col">Mon pseudo : </div>
-                    <div class="col"><input type="text" id="pseudo"></div>
+                    <div class="col"><input type="text" id="pseudo" value="{{ app.user.pseudo }}"></div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">Mon prénom : </div>
-                    <div class="col"><input type="text" id="prenom"></div>
+                    <div class="col"><input type="text" id="prenom" value="{{ app.user.prenom }}"></div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">Mon nom : </div>
-                    <div class="col"><input type="text" id="nom"></div>
+                    <div class="col"><input type="text" id="nom" value="{{ app.user.nom }}"></div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">Mon tel : </div>
-                    <div class="col"><input type="tel" id="tel" pattern="^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,5})|(\(?\d{2,6}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$"></div>
+                    {% if app.user.numTel != null %}
+                        <div class="col"><input type="text" id="tel" value="{{ app.user.numTel }}"></div>
+                    {% else %}
+                    <div class="col"><input type="text" id="tel"></div>
+                    {% endif %}
                 </div>
                 <div class="row mb-2">
                     <div class="col">Mon email : </div>
-                    <div class="col"><input type="email" id="email"></div>
+                    <div class="col"><input type="email" id="email" value="{{ app.user.email }}"></div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">Mot de passe : </div>
@@ -37,16 +41,15 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col">Confirmation : </div>
-                    <div class="col"><input type="password" id="mdp1"></div>
+                    <div class="col"><input type="password" id="mdp2"></div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">Ville de rattachement : </div>
-
-                    <select class="col form-control" name="cars" id="cars">
-                        <option value="volvo">Volvo</option>
-                        <option value="saab">Saab</option>
-                        <option value="mercedes">Mercedes</option>
-                        <option value="audi">Audi</option>
+                    <select class="col form-control" name="ville" id="ville">
+                        <option value="{{ app.user.idVille.nom }}"></option>
+                        {% for ville in villes %}
+                            <option value="{{ ville.id }}">{{ ville.nom }}</option>
+                        {% endfor %}</select>
                     </select>
                 </div>
             </div>
