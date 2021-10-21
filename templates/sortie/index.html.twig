@@ -5,8 +5,8 @@
 {% block body %}
 <div class="container">
     <div class="col-md-3 ml-md-auto mb-4">
-        <strong>Date du jour XX/XX/XXX</strong>
-        <strong>Participant(e) : Monsieur X</strong>
+        <strong>Date du jour : {{date }}</strong>
+        <strong>Participant(e) : {{ app.user.pseudo }}</strong>
     </div>
     <div class="row">
         <div class="col-6" style="overflow: auto">
@@ -14,20 +14,32 @@
             <div>
                 <div class="row mb-3" style="white-space: nowrap;">
                     <div class="col">Site : </div>
-                    <div class="col">Dropdownlist</div>
+                    <div class="col">
+                        <select class="form-control" name="site" id="site">
+                            <option value="">Choisir un site</option>
+                            {% for ville in villes %}
+                                <option value="{{ ville.id }}">{{ ville.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
                 <div class="row mb-3" style="white-space: nowrap;">
                     <div class="col">Le nom de la sortie contient : </div>
-                    <div class="col">input</div>
+                    <div class="col"><input type="text" class="form-control" id="search"></div>
                 </div>
-                <div class="row col" style="white-space: nowrap;">
-                    <div class="col row">
-                        <p class="mr-2">Entre : </p>
-                        <input type="date" id="start" name="trip-start">
-                        <p class="mr-2"> et </p>
-                    </div>
-                    <div class="col row">
-                        <input type="date" id="start" name="trip-end">
+                <div class="col  mb-3" style="white-space: nowrap;">
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <p>Entre :</p>
+                                <input type="date" class="form-control" style="width:75%" id="start" name="trip-start">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <p> et </p>
+                                <input type="date" class="form-control" style="width:75%" id="end" name="trip-end"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -59,10 +71,10 @@
             </div>
         </div>
         <div class="col-2">
-            <button class="button btn-primary btn-lg mt-4">Rechercher</button>
+            <button class="button btn-primary btn-lg mt-4" onclick="rechercher()">Rechercher</button>
         </div>
     </div>
-    <div id="dtTable">
+    <div id="dtTable" class="mt-3" style=" overflow:auto;">
 
     </div>
     {% if is_granted('ROLE_ORGA') %}
@@ -71,4 +83,38 @@
         </div>
     {% endif %}
 </div>
+<input class="d-none" id="id_user" value="{{ app.user.id}}">
+<script>
+    $( document ).ready(function() {
+        $.ajax({
+            url:"{{ path('afficher_DtTableSorties') }}",
+            success: function(data) {
+               $("#dtTable").html(data);
+            }
+        });
+    });
+    function rechercher(){
+        var id_site = $("#site").val();
+        var nom_sortie = $("#search").val();
+        var start = $("#start").val();
+        var end = $("#end").val();
+        var is_user =$("#id_user").val();
+        var orga =$("#orga").is(':checked');
+        var inscrit = $("#inscrit").is(':checked');
+        var noninscrit = $("#noninscrit").is(':checked');
+        var sortiesPasse = $("#sortiesPasse").is(':checked');
+        $.ajax({
+            url:"{{ path('afficher_DtTableSorties') }}",
+            data: { "id_site": id_site,"id_user": is_user, "nom_sortie":nom_sortie, "start":start, "end":end, "orga":orga, "inscrit":inscrit, "noninscrit":noninscrit, "sortiesPasse":sortiesPasse},
+            success: function(data) {
+                $("#dtTable").html(data);
+            }
+        });
+
+
+
+    }
+</script>
 {% endblock %}
+
+
