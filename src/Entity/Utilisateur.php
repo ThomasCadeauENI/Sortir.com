@@ -68,6 +68,7 @@ class Utilisateur implements UserInterface
      */
     private $sorties;
 
+
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
@@ -237,6 +238,5 @@ class Utilisateur implements UserInterface
 
         return $this;
     }
-
 
 }
