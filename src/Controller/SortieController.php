@@ -6,6 +6,7 @@ use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\Utilisateur;
 use App\Entity\Ville;
+use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,17 +36,15 @@ class SortieController extends AbstractController
     public function creer_sortie(Request $request): Response
     {
         $sortie = new Sortie();
-
-
         $form = $this->createForm(SortieType::class, $sortie);
-
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $sortie->setEtat('NC');
             $orga_session = $this->getUser()->getUsername();
             $organisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $orga_session));
             $sortie->setOrganisateur($organisateur);
+            $sortie->setEtat('NC');
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
             $em->flush();
@@ -57,7 +56,7 @@ class SortieController extends AbstractController
     }
 
     #[Route('/afficher/{id}', 'afficher')]
-    public function afficher(Request $request, Sortie $sortie): Response{
+    public function afficher(Request $request, Sortie $sortie, UtilisateurRepository $UR): Response{
 
         //Inutile car "Sortie $sortie" dans declaration de fonction
         //$sortie = $this->getDoctrine()->getRepository(Sortie::class)->find($id);
@@ -70,15 +69,15 @@ class SortieController extends AbstractController
          *      Participants.add(utilisateur)
          *
          */
-        //$participants = $sortie->getParticipants();
 
-
+        $participants = $UR->findAll();
+        dd($participants);
 
         return $this->render('sortie/affiche.html.twig', [
             'sortie' => $sortie,
             'lieu' => $lieu,
             'ville' => $ville,
-            //'participants' => $participants
+            'participants' => $participants
         ]);
     }
 

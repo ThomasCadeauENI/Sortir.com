@@ -58,10 +58,6 @@ class Utilisateur implements UserInterface
      */
     private $photo;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Sortie::class, inversedBy="participants")
-     */
-    private $sorties;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -74,11 +70,6 @@ class Utilisateur implements UserInterface
      */
     private $id_ville;
 
-
-    public function __construct()
-    {
-        $this->sorties = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -217,30 +208,6 @@ class Utilisateur implements UserInterface
     public function setPhoto(?string $photo): self
     {
         $this->photo = $photo;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|sortie[]
-     */
-    public function getSorties(): Collection
-    {
-        return $this->sorties;
-    }
-
-    public function addSorty(sortie $sorty): self
-    {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties[] = $sorty;
-        }
-
-        return $this;
-    }
-
-    public function removeSorty(sortie $sorty): self
-    {
-        $this->sorties->removeElement($sorty);
 
         return $this;
     }

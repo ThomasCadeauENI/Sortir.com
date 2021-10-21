@@ -57,11 +57,6 @@ class Sortie
     private $id_lieu;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Utilisateur::class, inversedBy="sorties")
-     */
-    private $participants;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $nom;
@@ -72,7 +67,7 @@ class Sortie
     private $etat;
 
     /**
-     * @ORM\ManyToOne(targetEntity=utilisateur::class)
+     * @ORM\ManyToOne(targetEntity=Utilisateur::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $organisateur;
@@ -81,6 +76,11 @@ class Sortie
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $motif;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Utilisateur::class)
+     */
+    private $participants;
 
     public function __construct()
     {
@@ -176,33 +176,6 @@ class Sortie
         return $this;
     }
 
-    /**
-     * @return Collection|Utilisateur[]
-     */
-    public function getParticipants(): Collection
-    {
-        return $this->participants;
-    }
-
-    public function addParticipant(Utilisateur $participant): self
-    {
-        if (!$this->participants->contains($participant)) {
-            $this->participants[] = $participant;
-            $participant->addSorty($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParticipant(Utilisateur $participant): self
-    {
-        if ($this->participants->removeElement($participant)) {
-            $participant->removeSorty($this);
-        }
-
-        return $this;
-    }
-
     public function getNom(): ?string
     {
         return $this->nom;
@@ -227,12 +200,12 @@ class Sortie
         return $this;
     }
 
-    public function getOrganisateur(): ?utilisateur
+    public function getOrganisateur(): ?Utilisateur
     {
         return $this->organisateur;
     }
 
-    public function setOrganisateur(utilisateur $organisateur): self
+    public function setOrganisateur(Utilisateur $organisateur): self
     {
         $this->organisateur = $organisateur;
 
@@ -247,6 +220,30 @@ class Sortie
     public function setMotif(?string $motif): self
     {
         $this->motif = $motif;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Utilisateur[]
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function addParticipant(Utilisateur $participant): self
+    {
+        if (!$this->participants->contains($participant)) {
+            $this->participants[] = $participant;
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(Utilisateur $participant): self
+    {
+        $this->participants->removeElement($participant);
 
         return $this;
     }
