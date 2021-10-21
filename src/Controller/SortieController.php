@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\Utilisateur;
 use App\Entity\Ville;
@@ -54,6 +55,9 @@ class SortieController extends AbstractController
 
             $sortie->setEtat('NC');
 
+            /* TODO - RECUP L'ID DE L'ORGA */
+            $sortie->setOrganisateur($this->getUser()->getID());
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
             $em->flush();
@@ -64,16 +68,32 @@ class SortieController extends AbstractController
         ]);
     }
 
-
     /**
      * @Route ("/afficher/{id}", requirements={"id"="\d+"}, name="afficher_sortie")
      */
-    public function afficher(Request $request, $id): Response{
+    public function afficher(Request $request, Sortie $sortie): Response{
 
-        $sortie = $this->getDoctrine()->getRepository(Sortie::class)->find($id);
+        //Inutile car "Sortie $sortie" dans declaration de fonction
+        //$sortie = $this->getDoctrine()->getRepository(Sortie::class)->find($id);
+        $lieu = $this->getDoctrine()->getRepository(Lieu::class)->find($sortie->getIdLieu());
+        $ville = $this->getDoctrine()->getRepository(Ville::class)->find($lieu->getIdVille());
+
+
+        /*
+         * Participants []
+         * For utilisateur in sortie_utilisateur where S.id_sortie=U.id_sortie
+         *      Participants.add(utilisateur)
+         *
+         */
+        $participants = $sortie->getParticipants();
+
+        dd($participants);
 
         return $this->render('sortie/affiche.html.twig', [
-            'sortie' => $sortie
+            'sortie' => $sortie,
+            'lieu' => $lieu,
+            'ville' => $ville,
+            'participants' => $participants
         ]);
     }
 
