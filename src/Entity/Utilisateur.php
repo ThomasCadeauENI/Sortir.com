@@ -49,11 +49,6 @@ class Utilisateur implements UserInterface
     private $prenom;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $ville;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $num_tel;
@@ -67,6 +62,17 @@ class Utilisateur implements UserInterface
      * @ORM\ManyToMany(targetEntity=Sortie::class, inversedBy="participants")
      */
     private $sorties;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $nom;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Ville::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $id_ville;
 
 
     public function __construct()
@@ -235,6 +241,30 @@ class Utilisateur implements UserInterface
     public function removeSorty(sortie $sorty): self
     {
         $this->sorties->removeElement($sorty);
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getIdVille(): ?Ville
+    {
+        return $this->id_ville;
+    }
+
+    public function setIdVille(?Ville $id_ville): self
+    {
+        $this->id_ville = $id_ville;
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Lieu;
 use App\Entity\Sortie;
+use App\Entity\Utilisateur;
 use App\Entity\Ville;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -33,9 +34,10 @@ class SortieType extends AbstractType
             ])
             ->add('id_lieu', EntityType::class, [
                 'class' => Lieu::class,
-                'choice_label' => 'rue',
+                'choice_label' => 'nom',
                 'label' => 'Lieu'
             ]);
+
     }
 
 

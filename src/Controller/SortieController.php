@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Lieu;
 use App\Entity\Sortie;
+use App\Entity\Utilisateur;
 use App\Entity\Ville;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,16 +36,16 @@ class SortieController extends AbstractController
     {
         $sortie = new Sortie();
 
+
         $form = $this->createForm(SortieType::class, $sortie);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $sortie->setEtat('NC');
-
-            /* TODO - RECUP L'ID DE L'ORGA */
-            $sortie->setOrganisateur($this->getUser()->getID());
-
+            $orga_session = $this->getUser()->getUsername();
+            $organisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $orga_session));
+            $sortie->setOrganisateur($organisateur);
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
             $em->flush();
@@ -69,15 +70,15 @@ class SortieController extends AbstractController
          *      Participants.add(utilisateur)
          *
          */
-        $participants = $sortie->getParticipants();
+        //$participants = $sortie->getParticipants();
 
-        dd($participants);
+
 
         return $this->render('sortie/affiche.html.twig', [
             'sortie' => $sortie,
             'lieu' => $lieu,
             'ville' => $ville,
-            'participants' => $participants
+            //'participants' => $participants
         ]);
     }
 
