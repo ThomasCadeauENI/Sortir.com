@@ -35,14 +35,20 @@ class Lieu
     private $longitude;
 
     /**
-     * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="id_lieu")
+     * @ORM\Column(type="string", length=255)
      */
-    private $sorties;
+    private $code_postal;
 
-    public function __construct()
-    {
-        $this->sorties = new ArrayCollection();
-    }
+    /**
+     * @ORM\ManyToOne(targetEntity=Ville::class, inversedBy="lieus")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $id_ville;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $nom;
 
     public function getId(): ?int
     {
@@ -61,56 +67,62 @@ class Lieu
         return $this;
     }
 
-    public function getLatitude(): ?float
+    public function getLatitude(): ?string
     {
         return $this->latitude;
     }
 
-    public function setLatitude(?float $latitude): self
+    public function setLatitude(?string $latitude): self
     {
         $this->latitude = $latitude;
 
         return $this;
     }
 
-    public function getLongitude(): ?float
+    public function getLongitude(): ?string
     {
         return $this->longitude;
     }
 
-    public function setLongitude(?float $longitude): self
+    public function setLongitude(?string $longitude): self
     {
         $this->longitude = $longitude;
 
         return $this;
     }
 
-    /**
-     * @return Collection|Sortie[]
-     */
-    public function getSorties(): Collection
+    public function getCodePostal(): ?string
     {
-        return $this->sorties;
+        return $this->code_postal;
     }
 
-    public function addSorty(Sortie $sorty): self
+    public function setCodePostal(string $code_postal): self
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties[] = $sorty;
-            $sorty->setIdLieu($this);
-        }
+        $this->code_postal = $code_postal;
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): self
+    public function getIdVille(): ?Ville
     {
-        if ($this->sorties->removeElement($sorty)) {
-            // set the owning side to null (unless already changed)
-            if ($sorty->getIdLieu() === $this) {
-                $sorty->setIdLieu(null);
-            }
-        }
+        return $this->id_ville;
+    }
+
+    public function setIdVille(?Ville $id_ville): self
+    {
+        $this->id_ville = $id_ville;
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
 
         return $this;
     }
