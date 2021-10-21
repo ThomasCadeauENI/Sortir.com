@@ -51,10 +51,10 @@ class Utilisateur implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $ville;
+    private $nom;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=10, nullable=true)
      */
     private $num_tel;
 
@@ -68,6 +68,11 @@ class Utilisateur implements UserInterface
      */
     private $sorties;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Ville::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $id_ville;
 
     public function __construct()
     {
@@ -179,14 +184,14 @@ class Utilisateur implements UserInterface
         return $this;
     }
 
-    public function getVille(): ?string
+    public function getNom(): ?string
     {
-        return $this->ville;
+        return $this->nom;
     }
 
-    public function setVille(string $ville): self
+    public function setNom(string $nom): self
     {
-        $this->ville = $ville;
+        $this->prenom = $nom;
 
         return $this;
     }
@@ -239,4 +244,15 @@ class Utilisateur implements UserInterface
         return $this;
     }
 
+    public function getIdVille(): ?ville
+    {
+        return $this->id_ville;
+    }
+
+    public function setIdVille(?ville $id_ville): self
+    {
+        $this->id_ville = $id_ville;
+
+        return $this;
+    }
 }
