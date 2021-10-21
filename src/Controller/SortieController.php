@@ -45,6 +45,7 @@ class SortieController extends AbstractController
             $organisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $orga_session));
             $sortie->setOrganisateur($organisateur);
             $sortie->setEtat('NC');
+            $sortie->addParticipant($organisateur);
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
             $em->flush();
@@ -70,8 +71,7 @@ class SortieController extends AbstractController
          *
          */
 
-        $participants = $UR->findAll();
-        dd($participants);
+        $participants = $sortie->getParticipants();
 
         return $this->render('sortie/affiche.html.twig', [
             'sortie' => $sortie,
@@ -86,4 +86,9 @@ class SortieController extends AbstractController
         return $this->render ('utilisateur/profil.html.twig');
     }
 
+    #[Route('/afficher/{id}', 'afficher')]
+    public function participer(){
+
+        return $this->render('sortie/affiche.html.twig');
+    }
 }

@@ -87,10 +87,12 @@
         </div>
     </div>
     <div class="ml-3">
-        <strong>Liste des participants inscrits (TODO/{{ sortie.NbPlace }}):</strong>
+        <strong>Liste des participants inscrits ({{ participants|length }}/{{ sortie.NbPlace }}):</strong>
         <div class="col-3" style="overflow: auto; height: 200px">
             <table class="table">
-
+                {% for p in participants %}
+                    {{ p.prenom }}
+                {% endfor %}
             </table>
         </div>
     </div>
