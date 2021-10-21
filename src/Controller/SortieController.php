@@ -6,6 +6,7 @@ use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\Utilisateur;
 use App\Entity\Ville;
+use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,17 +48,16 @@ class SortieController extends AbstractController
     public function creer_sortie(Request $request): Response
     {
         $sortie = new Sortie();
-
         $form = $this->createForm(SortieType::class, $sortie);
-
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
 
+            $orga_session = $this->getUser()->getUsername();
+            $organisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $orga_session));
+            $sortie->setOrganisateur($organisateur);
             $sortie->setEtat('NC');
-
-            /* TODO - RECUP L'ID DE L'ORGA */
-            $sortie->setOrganisateur($this->getUser()->getID());
-
+            $sortie->addParticipant($organisateur);
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
             $em->flush();
@@ -67,6 +67,7 @@ class SortieController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+
 
     /**
      * @Route ("/afficher/{id}", requirements={"id"="\d+"}, name="afficher_sortie")
@@ -85,9 +86,8 @@ class SortieController extends AbstractController
          *      Participants.add(utilisateur)
          *
          */
-        $participants = $sortie->getParticipants();
 
-        dd($participants);
+        $participants = $sortie->getParticipants();
 
         return $this->render('sortie/affiche.html.twig', [
             'sortie' => $sortie,
@@ -131,3 +131,4 @@ class SortieController extends AbstractController
 }
 
 }
+
