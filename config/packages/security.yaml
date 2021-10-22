@@ -37,6 +37,8 @@ security:
 
   access_control:
     - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/lieu, roles: ROLE_ADMIN }
+    - { path: ^/ville, roles: ROLE_ADMIN }
     - { path: ^/orgnaisateur, roles: ROLE_ORGA}
     - { path: ^/utilisateur, roles: ROLE_USER }
 

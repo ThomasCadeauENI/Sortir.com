@@ -1,22 +1,26 @@
 <table class="table">
     <tr>
         <th>Ville</th>
-        <th>Code Postal</th>
         <th>Actions</th>
     </tr>
-    <tr>
         {% for ville in villes %}
-            <td>ville.nom</td>
-            <td>ville.code_postal</td>
-            <td>
-                <a>Modifier</a>
-                <a> - Supprimer</a>
+        <tr>
+            <td id="ville_{{ ville.id }}">
+                <span id="span_ville_{{ ville.id }}">{{ ville.nom }}</span>
+                <input id="input_ville_{{ ville.id }}" value="{{ ville.nom }}" class="form-control d-none">
             </td>
+                <td>
+                    <button class="btn" onclick="update({{ ville.id }})">Modifier</button>
+                    <a> - </a>
+                    <button class="btn" onclick="removeVille({{ ville.id }})">Supprimer</button>
+                </td>
+        </tr>
+
         {% endfor %}
-        <td><input type="text" id="nom"></td>
-        <td><input type="text" id="codepostal"></td>
-        <td>
-            <a>Ajouter</a>
-        </td>
-    </tr>
+        <tr>
+            <td><input type="text" class="form-control" id="nom" required></td>
+            <td>
+                <button class="btn btn-primary" onclick="addVille()">Ajouter</button>
+            </td>
+        </tr>
 </table>

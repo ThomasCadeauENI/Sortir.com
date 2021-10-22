@@ -39,17 +39,11 @@ class UtilisateurRepository extends ServiceEntityRepository implements PasswordU
 
 
 
-         /**
-      * @return Utilisateur Returns an array of Utilisateur objects
-      */
-
-    public function findById($id)
+    public function findById($id):?Utilisateur
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.id = :id')
             ->setParameter('id', $id)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(1)
             ->getQuery()
             ->getResult()
         ;

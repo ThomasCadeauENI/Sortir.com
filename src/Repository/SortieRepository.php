@@ -77,17 +77,7 @@ class SortieRepository extends ServiceEntityRepository
         $stmt = $conn->prepare($sql);
 
         return $stmt->execute()->fetchAll();
+
     }
 
-    /*
-    public function findOneBySomeField($value): ?Sortie
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
