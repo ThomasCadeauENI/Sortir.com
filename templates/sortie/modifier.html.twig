@@ -85,7 +85,11 @@
                 <div class="col text-center">{{ form_widget(form.modifier) }}</div>
                 <div class="col text-center">{{ form_widget(form.publier) }}</div>
                 <div class="col text-center">{{ form_widget(form.supprimer) }}</div>
-                <div class="col text-center"><a href="../annuler/{{ sortie.id }}"></a>{{ form_widget(form.annuler) }}</div>
+                <div class="col text-center">
+                    <a href="{{ path('annuler_sortie',{ 'id': sortie.id }) }}">
+                        Annuler
+                    </a>
+                </div>
             </div>
             {{ form_end(form, {"render_rest":false}) }}
         </div>

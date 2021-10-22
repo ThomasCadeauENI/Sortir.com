@@ -21,7 +21,7 @@
         <td>
             <a href="{{ path('afficher_sortie',{ 'id': sortie.id }) }}">Afficher</a>
             {% if sortie.organisateur_id == app.user.id %}
-                <a href="{{  path('afficher_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
+                <a href="{{  path('annuler_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
             {% else %}
                 {% if sortie.etat != "En création" and date(sortie.date_sortie) < date() %}
                     <a> - Se désister</a>

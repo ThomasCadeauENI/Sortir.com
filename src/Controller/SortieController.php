@@ -176,6 +176,7 @@ class SortieController extends AbstractController
         if ($form->isSubmitted()) {
             $sortie->setEtat("Annule");
 
+
             $em->persist($sortie);
             $em->flush();
         }
