@@ -9,17 +9,13 @@
         <th>Organisateur</th>
         <th>Actions</th>
     </tr>
-    <tr>
         {% for sortie in sorties %}
+        <tr>
             <td>{{ sortie.nom }}</td>
             <td>{{ sortie.date_sortie|date("d-m-Y H:i") }}</td>
             <td>{{ sortie.date_fin_inscription }}</td>
             <td>/{{ sortie.nb_place }}</td>
-            <td>
-                {% if sortie.id in user.id_sorties %}
-                <span>X</span>
-                {% endif %}
-            </td>
+            <td>/{{ sortie.nb_place }}</td>
             <td>{{ sortie.etat }}</td>
             <td>d</td>
         <td>
@@ -27,9 +23,9 @@
             {% if sortie.organisateur_id == app.user.id %}
                 <a href="{{  path('afficher_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
             {% else %}
-                {% if sortie.etat != "En création" and date(sortie.date_sortie) < date() and sortie.id in user.sorties %}
+                {% if sortie.etat != "En création" and date(sortie.date_sortie) < date() %}
                     <a> - Se désister</a>
-                {% elseif sortie.etat != "En création" and date(sortie.date_fin_inscription) < date() and sortie.id not in user.sorties%}
+                {% elseif sortie.etat != "En création" and date(sortie.date_fin_inscription) < date() %}
                     <a> - S'inscrire</a>
                 {% endif %}
 
@@ -39,6 +35,7 @@
                 {% endif %}
             {% endif %}
             </td>
+        </tr>
         {% endfor %}
-    </tr>
+
 </table>

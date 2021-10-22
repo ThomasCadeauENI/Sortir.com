@@ -83,10 +83,10 @@
                 </div>
             </div>
 
-            <div class="input-field col s12 m12 l12">
-                <input type="submit" name="" value="Enregistrer" class="btn btn-primary">
+            <div class="col-md-6 offset-md-3 row">
+                <div class="col text-center">{{ form_widget(form.enregistrer) }}</div>
             </div>
-            {{ form_end(form) }}
+            {{ form_end(form, {"render_rest":false}) }}
         </div>
     </div>
 

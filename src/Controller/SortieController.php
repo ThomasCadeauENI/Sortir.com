@@ -51,12 +51,12 @@ class SortieController extends AbstractController
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
 
             $orga_session = $this->getUser()->getUsername();
             $organisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $orga_session));
             $sortie->setOrganisateur($organisateur);
-            $sortie->setEtat('NC');
+            $sortie->setEtat('En creation');
             $sortie->addParticipant($organisateur);
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
@@ -128,7 +128,62 @@ class SortieController extends AbstractController
             'user' => $user
         ]);
 
-}
+    }
 
+    /**
+     * @Route ("/modifier/{id}", requirements={"id"="\d+"}, name="modifier_sortie")
+     */
+    public function modifier(Request $request, Sortie $sortie){
+
+        $form = $this->createForm(SortieType::class, $sortie);
+        $form->handleRequest($request);
+
+        $path = 'sortie/modifier.html.twig';
+
+        if ($form->isSubmitted()) {
+            $em = $this->getDoctrine()->getManager();
+            if ($form->get('modifier')->isClicked()){
+                $em->persist($sortie);
+            }
+            if ($form->get('supprimer')->isClicked()) {
+                $em->remove($sortie);
+            }
+            if ($form->get('publier')->isClicked()){
+                $sortie->setEtat('Ouvert');
+                $em->persist($sortie);
+            }
+            if ($form->get('annuler')->isClicked()) {
+                $path = 'sortie/modifier.html.twig';
+            }
+            $em->flush();
+        }
+
+        return $this->render($path, [
+            'sortie' => $sortie,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route ("/annuler/{id}", requirements={"id"="\d+"}, name="annuler_sortie")
+     */
+    public function annuler(Request $request, Sortie $sortie)
+    {
+        $form = $this->createForm(SortieType::class, $sortie);
+        $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+
+        if ($form->isSubmitted()) {
+            $sortie->setEtat("Annule");
+
+            $em->persist($sortie);
+            $em->flush();
+        }
+
+        return $this->render('sortie/annuler.html.twig', [
+            'sortie' => $sortie,
+            'form' => $form->createView()
+        ]);
+    }
 }
 

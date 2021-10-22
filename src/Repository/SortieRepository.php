@@ -73,22 +73,10 @@ class SortieRepository extends ServiceEntityRepository
                 $where = substr($where,0,-3);
         }
 
-
         $sql = $sql . $where;
-        $myfile = fopen("C:\\Users\\fenet2020\\Documents\\file.txt", "w") or die("Unable to open file!");
-        fwrite($myfile, $sql);
-        fclose($myfile);
-
         $stmt = $conn->prepare($sql);
 
-
-
         return $stmt->execute()->fetchAll();
-
-
-
-
-
     }
 
     /*

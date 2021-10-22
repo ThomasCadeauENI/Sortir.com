@@ -2,90 +2,92 @@
 
 {% block body %}
     <div class="container mt-4">
-        <div class="text-center mb-5"><h2>Afficher une sortie</h2></div>
+        <div class="text-center mb-5"><h2>Creer une sortie</h2></div>
         <div class="row col mb-5">
+            {{ form_start(form) }}
             <div class="col-6">
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Nom de la sortie : </div>
-                        <div class="col-6">sortie.nom</div>
+                        <div class="col-6">{{ form_widget(form.nom) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Date et heure de la sortie : </div>
-                        <div class="col-6">sortie.date_sortie</div>
+                        <div class="col-6">{{ form_widget(form.date_sortie) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Date limite inscription : </div>
-                        <div class="col-6">sortie.date_fin_inscription</div>
+                        <div class="col-6">{{ form_widget(form.date_fin_inscription) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Nombre de place : </div>
-                        <div class="col-6">sortie.participants|length / sortie.nb_place</div>
+                        <div class="col-6">{{ form_widget(form.nb_place) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Durée : </div>
-                        <div class="col-6">sortie.duree minutes</div>
+                        <div class="col-6">{{ form_widget(form.duree) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Descripiton et infos : </div>
-                        <div class="col-6">sortie.nom</div>
+                        <div class="col-6">{{ form_widget(form.description) }}</div>
                     </div>
                 </div>
             </div>
             <div class="col-6">
                 <div class="col mb-2">
                     <div class="row">
-                        <div class="col-6">Ville organisatrice : </div>
-                        <div class="col-6">sortie.id_ville.nom</div>
+                        <div class="col-6">Ville : </div>
+                        <div class="col-6">{{ form_widget(form.id_ville) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Lieu : </div>
-                        <div class="col-6">sortie.id_lieu.nom</div>
+                        <div class="col-6">{{ form_widget(form.id_lieu) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Rue : </div>
-                        <div class="col-6">sortie.id_lieu.rue</div>
+                        <div class="col-6">TODO</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Code postal : </div>
-                        <div class="col-6">sortie.id_lieu.code_postal</div>
+                        <div class="col-6">TODO</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Longitude : </div>
-                        <div class="col-6">sortie.id_lieu.longitude</div>
+                        <div class="col-6">TODO</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Latitude : </div>
-                        <div class="col-6">sortie.id_lieu.latitude</div>
+                        <div class="col-6">TODO</div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-6 offset-md-3 row">
+                <div class="col text-center">{{ form_widget(form.modifier) }}</div>
+                <div class="col text-center">{{ form_widget(form.publier) }}</div>
+                <div class="col text-center">{{ form_widget(form.supprimer) }}</div>
+                <div class="col text-center"><a href="../annuler/{{ sortie.id }}"></a>{{ form_widget(form.annuler) }}</div>
+            </div>
+            {{ form_end(form, {"render_rest":false}) }}
         </div>
-    </div>
-    <div class="col-md-6 offset-md-3 row">
-        <div class="col text-center"><button class="btn btn-primary btn-lg">Enregistrer</button></div>
-        <div class="col text-center"><button class="btn btn-primary btn-lg">Publier la sortie</button></div>
-        <div class="col text-center"><button class="btn btn-primary btn-lg">Supprimer la sortie</button></div>
-        <div class="col text-center"><button class="btn btn-primary btn-lg">Annuler</button></div>
     </div>
 {% endblock %}
