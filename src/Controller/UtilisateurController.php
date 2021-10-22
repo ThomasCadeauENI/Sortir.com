@@ -25,7 +25,8 @@ class UtilisateurController extends AbstractController
      */
     public function updateMonProfil(Request $request, UserPasswordEncoderInterface $userPasswordEncoderInterface): Response
     {
-        $form = $this->createForm(UtilisateurType::class);
+        $utilisateur = $this->getUser();
+        $form = $this->createForm(UtilisateurType::class, $utilisateur);
         $form->handleRequest($request);
 
         $entityManager = $this->getDoctrine();
@@ -34,7 +35,7 @@ class UtilisateurController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $id = $request->get('id');
+            $id = $utilisateur->getId();
 
             $utilisateur = $entityManager->getRepository(Utilisateur::class)->find($id);
 
@@ -58,7 +59,7 @@ class UtilisateurController extends AbstractController
                 $form->get('password')->getData()
             );
 
-            if($password == $confirmPassword && $utilisateur->getPasword()==$passwordHashed){
+            if($password == $confirmPassword && $utilisateur->getPassword()==$passwordHashed){
                 $ville = $repo->find($id_ville);
                 $utilisateur -> setIdVille($ville);
 
