@@ -6,6 +6,7 @@ use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\Utilisateur;
 use App\Entity\Ville;
+use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,17 +48,16 @@ class SortieController extends AbstractController
     public function creer_sortie(Request $request): Response
     {
         $sortie = new Sortie();
-
         $form = $this->createForm(SortieType::class, $sortie);
-
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
 
-            $sortie->setEtat('NC');
+        if ($form->isSubmitted()) {
 
-            /* TODO - RECUP L'ID DE L'ORGA */
-            $sortie->setOrganisateur($this->getUser()->getID());
-
+            $orga_session = $this->getUser()->getUsername();
+            $organisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $orga_session));
+            $sortie->setOrganisateur($organisateur);
+            $sortie->setEtat('En creation');
+            $sortie->addParticipant($organisateur);
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
             $em->flush();
@@ -67,6 +67,7 @@ class SortieController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+
 
     /**
      * @Route ("/afficher/{id}", requirements={"id"="\d+"}, name="afficher_sortie")
@@ -85,9 +86,8 @@ class SortieController extends AbstractController
          *      Participants.add(utilisateur)
          *
          */
-        $participants = $sortie->getParticipants();
 
-        dd($participants);
+        $participants = $sortie->getParticipants();
 
         return $this->render('sortie/affiche.html.twig', [
             'sortie' => $sortie,
@@ -128,6 +128,63 @@ class SortieController extends AbstractController
             'user' => $user
         ]);
 
+    }
+
+    /**
+     * @Route ("/modifier/{id}", requirements={"id"="\d+"}, name="modifier_sortie")
+     */
+    public function modifier(Request $request, Sortie $sortie){
+
+        $form = $this->createForm(SortieType::class, $sortie);
+        $form->handleRequest($request);
+
+        $path = 'sortie/modifier.html.twig';
+
+        if ($form->isSubmitted()) {
+            $em = $this->getDoctrine()->getManager();
+            if ($form->get('modifier')->isClicked()){
+                $em->persist($sortie);
+            }
+            if ($form->get('supprimer')->isClicked()) {
+                $em->remove($sortie);
+            }
+            if ($form->get('publier')->isClicked()){
+                $sortie->setEtat('Ouvert');
+                $em->persist($sortie);
+            }
+            if ($form->get('annuler')->isClicked()) {
+                $path = 'sortie/modifier.html.twig';
+            }
+            $em->flush();
+        }
+
+        return $this->render($path, [
+            'sortie' => $sortie,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route ("/annuler/{id}", requirements={"id"="\d+"}, name="annuler_sortie")
+     */
+    public function annuler(Request $request, Sortie $sortie)
+    {
+        $form = $this->createForm(SortieType::class, $sortie);
+        $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+
+        if ($form->isSubmitted()) {
+            $sortie->setEtat("Annule");
+
+
+            $em->persist($sortie);
+            $em->flush();
+        }
+
+        return $this->render('sortie/annuler.html.twig', [
+            'sortie' => $sortie,
+            'form' => $form->createView()
+        ]);
+    }
 }
 
-}

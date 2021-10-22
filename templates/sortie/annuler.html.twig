@@ -8,38 +8,39 @@
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Nom de la sortie : </div>
-                        <div class="col-6">sortie.nom</div>
+                        <div class="col-6">{{ sortie.nom }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Date de la sortie : </div>
-                        <div class="col-6">sortie.date_sortie</div>
+                        <div class="col-6">{{ sortie.DateSortie|date("d-m-Y H:i") }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Ville organisatrice : </div>
-                        <div class="col-6">sortie.ville.nom</div>
+                        <div class="col-6">TODO</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Lieu : </div>
-                        <div class="col-6">sortie.lieu.rue sortie.lieu.code_postal</div>
+                        <div class="col-6">TODO</div>
                     </div>
                 </div>
+                {{ form_start(form) }}
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Motif : </div>
-                        <div class="col-6"><textarea style="width: 100%"></textarea> </div>
+                        <div class="col-6">{{ form_widget(form.motif) }}</div>
                     </div>
                 </div>
+                <div class="input-field col s12 m12 l12">
+                    <input type="submit" name="" value="Enregistrer" class="btn btn-primary">
+                </div>
+                {{ form_end(form, {"render_rest":false}) }}
             </div>
         </div>
-    </div>
-    <div class="col-md-6 offset-md-3 row">
-        <div class="col text-center"><button class="btn btn-primary btn-lg btn-success">Enregistrer</button></div>
-        <div class="col text-center"><button class="btn btn-primary btn-lg btn-danger">Annuler</button></div>
     </div>
 {% endblock %}

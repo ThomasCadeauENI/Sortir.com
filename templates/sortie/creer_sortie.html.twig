@@ -82,7 +82,11 @@
                     </div>
                 </div>
             </div>
-            {{ form_end(form) }}
+
+            <div class="col-md-6 offset-md-3 row">
+                <div class="col text-center">{{ form_widget(form.enregistrer) }}</div>
+            </div>
+            {{ form_end(form, {"render_rest":false}) }}
         </div>
     </div>
 

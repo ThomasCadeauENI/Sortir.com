@@ -73,13 +73,11 @@ class SortieRepository extends ServiceEntityRepository
                 $where = substr($where,0,-3);
         }
 
-
         $sql = $sql . $where;
         $stmt = $conn->prepare($sql);
 
-        $sorties = $stmt->execute()->fetchAll();
+        return $stmt->execute()->fetchAll();
 
-        return $sorties;
     }
 
 }
