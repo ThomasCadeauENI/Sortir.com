@@ -14,27 +14,27 @@
                 {{ form_start(form) }}
                 <div class="row mb-2">
                     <div class="col">Mon pseudo : </div>
-                    <div class="col">{{ form_widget(form.pseudo, {'attr': {'class': 'form-control', 'value': app.user.pseudo}}) }}</div>
+                    <div class="col">{{ form_widget(form.pseudo, {'attr': {'class': 'form-control'}}) }}</div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">Mon prénom : </div>
-                    <div class="col">{{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'value': app.user.prenom}}) }}</div>
+                    <div class="col">{{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}</div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">Mon nom : </div>
-                    <div class="col">{{ form_widget(form.nom, {'attr': {'class': 'form-control', 'value': app.user.nom}}) }}</div>
+                    <div class="col">{{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}</div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">Mon tel : </div>
                     {% if app.user.numTel != null %}
-                        <div class="col">{{ form_widget(form.num_tel, {'attr': {'class': 'form-control', 'value': app.user.NumTel}}) }}</div>
+                        <div class="col">{{ form_widget(form.num_tel, {'attr': {'class': 'form-control'}}) }}</div>
                     {% else %}
                     <div class="col">{{ form_widget(form.num_tel, {'attr': {'class': 'form-control'}}) }}</div>
                     {% endif %}
                 </div>
                 <div class="row mb-2">
                     <div class="col">Mon email : </div>
-                    <div class="col">{{ form_widget(form.email, {'attr': {'class': 'form-control', 'value': app.user.email}}) }}</div>
+                    <div class="col">{{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}</div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">Mot de passe : </div>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col">Ville de rattachement : </div>
-                    <div class="col">{{ form_widget(form.id_ville, {'attr': {'class': 'form-control', 'value': app.user.idVille.nom}}) }}</div>
+                    <div class="col">{{ form_widget(form.id_ville, {'attr': {'class': 'form-control'}}) }}</div>
                 </div>
             </div>
         </div>
