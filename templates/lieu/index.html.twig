@@ -1,18 +1,85 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div>
-        <div class="text-center">Gérer les Sites</div>
+    <div class="mb-3">
+        <div class="text-center">Gérer les lieux</div>
         <div class="col">
-            <strong>Filtrer les sites</strong>
+            <strong>Filtrer les villes</strong>
 
             <div class="col row">
                 <p class="mr-3">Le nom contient : </p>
                 <input type="text" class="form-control" style="width: 25%" id="search">
                 <button class="btn btn-primary">Rechercher</button>
-            </div>
+        </div>
 
         </div>
     </div>
+    <div id="dtTable"></div>
+    <script>
+        $( document ).ready(function() {
+            myDT();
+        });
+        function myDT(){
+            $.ajax({
+                url:"{{ path('afficher_DtTableLieux') }}",
+                success: function(data) {
+                    $("#dtTable").html(data);
+                }
+            });
+        }
+        function update(id){
+            if($("#s_l_n_" + id).hasClass("d-none") && ($("#i_l_n_" + id).val() != $("#s_l_n_" + id).html() || $("#i_l_cp_" + id).val() != $("#s_l_cp_" + id).html() || $("#i_l_r_" + id).val() != $("#s_l_r_" + id).html() || $("#i_l_v_" + id).val() != $("#s_l_v_" + id).html() || $("#i_l_lat_" + id).val() != $("#s_l_lat_" + id).html() ||$("#i_l_lon_" + id).val() != $("#s_l_lon_" + id).html()))
+            {
+                $.ajax({
+                    url:"{{ path('update_lieu') }}",
+                    method: 'POST',
+                    data:{id:id, nom: $("#i_l_n_" + id).val(), r:$("#i_l_r_" + id).val(), cp:$("#i_l_cp_" + id).val(), idv:$("#i_l_v_" + id).val(), lat: $("#i_l_lat_" + id).val(), lon:$("#i_l_lon_" + id).val()  },
+                    success:function (){
+                        myDT();
 
+                    }
+                });
+            }else {
+                $("#s_l_n_" + id).toggleClass("d-none");
+                $("#i_l_n_" + id).toggleClass("d-none");
+
+                $("#s_l_r_" + id).toggleClass("d-none");
+                $("#i_l_r_" + id).toggleClass("d-none");
+
+                $("#s_l_cp_" + id).toggleClass("d-none");
+                $("#i_l_cp_" + id).toggleClass("d-none");
+
+                $("#s_l_v_" + id).toggleClass("d-none");
+                $("#i_l_v_" + id).toggleClass("d-none");
+
+                $("#s_l_lat_" + id).toggleClass("d-none");
+                $("#i_l_lat_" + id).toggleClass("d-none");
+
+                $("#s_l_lon_" + id).toggleClass("d-none");
+                $("#i_l_lon_" + id).toggleClass("d-none");
+            }
+        }
+        function addLieu(){
+            if($("#nom").val().replace(/\s/g, '') != "" && $("#code_postal").val().replace(/\s/g, '') != "" && $("#rue").val().replace(/\s/g, '') != "" && $("#site").val() != ""){
+                $.ajax({
+                    url:"{{ path('add_lieu') }}",
+                    method: 'POST',
+                    data:{nom: $("#nom").val(), cp: $("#code_postal").val(), rue:$("#rue").val(), idv:$("#site").val(), latitude:$("#latitude").val(), longitude:$("#longitude").val()},
+                    success:function (){
+                        myDT();
+                    }
+                });
+            }
+        }
+        function remove(id){
+            $.ajax({
+                url:"{{ path('remove_lieu') }}",
+                method: 'POST',
+                data:{id: id },
+                success:function (){
+                    myDT();
+                }
+            });
+        }
+    </script>
 {% endblock %}

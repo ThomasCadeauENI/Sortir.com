@@ -14,5 +14,54 @@
 
         </div>
     </div>
+    <div id="dtTable"></div>
+<script>
+    $( document ).ready(function() {
+        myDT();
+    });
+    function myDT(){
+        $.ajax({
+            url:"{{ path('afficher_DtTableVilles') }}",
+            success: function(data) {
+                $("#dtTable").html(data);
+            }
+        });
+    }
+    function update(id){
+        if($("#span_ville_" + id).hasClass("d-none") && $("#input_ville_" + id).val() != $("#span_ville_" + id).html())
+        {
+            $.ajax({
+                url:"{{ path('update_ville') }}",
+                data:{id:id, nom: $("#input_ville_" + id).val()  },
+                success:function (){
+                    myDT();
 
+                }
+            });
+        }else {
+            $("#input_ville_" + id).toggleClass("d-none");
+            $("#span_ville_" + id).toggleClass("d-none");
+        }
+    }
+    function addVille(){
+        if($("#nom").val() != ""){
+            $.ajax({
+                url:"{{ path('add_ville') }}",
+                data:{nom: $("#nom").val() },
+                success:function (){
+                    myDT();
+                }
+            });
+        }
+    }
+    function remove(id){
+        $.ajax({
+            url:"{{ path('remove_ville') }}",
+            data:{id: id },
+            success:function (){
+                myDT();
+            }
+        });
+    }
+</script>
 {% endblock %}
