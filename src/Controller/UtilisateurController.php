@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UtilisateurController extends AbstractController
 {
@@ -22,7 +23,7 @@ class UtilisateurController extends AbstractController
     /**
      * @Route("/utilisateur", name="mon_profil")
      */
-    public function updateMonProfil(Request $request): Response
+    public function updateMonProfil(Request $request, UserPasswordEncoderInterface $userPasswordEncoderInterface): Response
     {
         $form = $this->createForm(UtilisateurType::class);
         $form->handleRequest($request);
@@ -52,7 +53,12 @@ class UtilisateurController extends AbstractController
                 );
             }
 
-            if($password == $confirmPassword && $utilisateur->getPasword()==$password){
+            $passwordHashed = $userPasswordEncoderInterface->encodePassword(
+                $utilisateur,
+                $form->get('password')->getData()
+            );
+
+            if($password == $confirmPassword && $utilisateur->getPasword()==$passwordHashed){
                 $ville = $repo->find($id_ville);
                 $utilisateur -> setIdVille($ville);
 
@@ -61,7 +67,7 @@ class UtilisateurController extends AbstractController
                 $utilisateur->setNom($nom);
                 $utilisateur->setNumTel($num_tel);
                 $utilisateur->setEmail($email);
-
+                $em->persist($utilisateur);
                 $em->flush();
             }
         }
