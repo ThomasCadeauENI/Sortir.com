@@ -9,8 +9,8 @@
         <th>Organisateur</th>
         <th>Actions</th>
     </tr>
-    <tr>
         {% for sortie in sorties %}
+        <tr>
             <td>{{ sortie.nom }}</td>
             <td>{{ sortie.date_sortie|date("d-m-Y H:i") }}</td>
             <td>{{ sortie.date_fin_inscription }}</td>
@@ -22,7 +22,7 @@
         <td class="row">
             <a href="{{ path('afficher_sortie',{ 'id': sortie.id }) }}">Afficher</a>
             {% if sortie.organisateur_id == app.user.id %}
-                <a href="{{  path('afficher_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
+                <a href="{{  path('annuler_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
             {% else %}
                 {% if sortie.etat != "En création" and date(sortie.date_sortie) < date() and sortie.id in user.sorties %}
                     <p> - </p>
@@ -39,6 +39,7 @@
                 {% endif %}
             {% endif %}
             </td>
+        </tr>
         {% endfor %}
-    </tr>
+
 </table>

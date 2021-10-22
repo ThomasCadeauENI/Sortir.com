@@ -63,12 +63,6 @@ class Utilisateur implements UserInterface
      */
     private $photo;
 
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $nom;
-
     /**
      * @ORM\ManyToOne(targetEntity=Ville::class)
      * @ORM\JoinColumn(nullable=false)
@@ -217,18 +211,6 @@ class Utilisateur implements UserInterface
         return $this;
     }
 
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): self
-    {
-        $this->nom = $nom;
-
-        return $this;
-    }
-
     public function getIdVille(): ?Ville
     {
         return $this->id_ville;
@@ -241,15 +223,4 @@ class Utilisateur implements UserInterface
         return $this;
     }
 
-    public function getIdVille(): ?ville
-    {
-        return $this->id_ville;
-    }
-
-    public function setIdVille(?ville $id_ville): self
-    {
-        $this->id_ville = $id_ville;
-
-        return $this;
-    }
 }
