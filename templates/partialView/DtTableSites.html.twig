@@ -1,19 +1,71 @@
 <table class="table">
     <tr>
         <th>Ville</th>
+        <th>Code Postal</th>
+        <th>Rue</th>
+        <th>Ville</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
         <th>Actions</th>
     </tr>
-    <tr>
         {% for lieu in lieux %}
-            <td>lieu.nom</td>
+        <tr>
+
             <td>
-                <a>Modifier</a>
-                <a> - Supprimer</a>
+                <span id="s_l_n_{{ lieu.id }}">{{ lieu.nom }}</span>
+                <input class="d-none form-control" type="text" id="i_l_n_{{ lieu.id }}" value="{{ lieu.nom }}">
             </td>
+            <td>
+                <span id="s_l_cp_{{ lieu.id }}">{{ lieu.codePostal }}</span>
+                <input class="d-none form-control" type="text" id="i_l_cp_{{ lieu.id }}" value="{{ lieu.codePostal }}">
+            </td>
+            <td>
+                <span id="s_l_r_{{ lieu.id }}">{{ lieu.rue }}</span>
+                <input class="d-none form-control" type="text" id="i_l_r_{{ lieu.id }}" value="{{ lieu.rue }}">
+            </td>
+            <td>
+                <span id="s_l_v_{{ lieu.id }}">{{ lieu.idVille.nom }}</span>
+                <select class="d-none form-control" name="site" id="i_l_v_{{ lieu.id }}" >
+                    <option value="{{ lieu.idVille.id }}">{{ lieu.idVille.nom }}</option>
+                    {% for ville in villes %}
+                        {% if ville.id != lieu.idVille.id %}
+                            <option value="{{ ville.id }}">{{ ville.nom }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <span id="s_l_lat_{{ lieu.id }}">{{ lieu.latitude }}</span>
+                <input class="d-none form-control" type="text" id="i_l_lat_{{ lieu.id }}" value="{{ lieu.latitude }}">
+            </td>
+            <td>
+                <span id="s_l_lon_{{ lieu.id }}">{{ lieu.longitude }}</span>
+                <input class="d-none form-control" type="text" id="i_l_lon_{{ lieu.id }}" value="{{ lieu.longitude }}">
+            </td>
+            <td class="">
+                <button class="btn" onclick="update({{ lieu.id }})">Modifier</button>
+                <a> - </a>
+                <button class="btn" onclick="remove({{ lieu.id }})">Supprimer</button>
+            </td>
+        </tr>
         {% endfor %}
-        <td><input type="text" id="nom"></td>
+    <tr>
+
+    <td><input type="text" class="form-control" id="nom"></td>
+    <td><input type="text" id="code_postal" class="form-control" ></td>
+    <td><input type="text" id="rue" class="form-control" ></td>
+    <td>
+        <select class="form-control" name="site" id="site">
+            <option value="">Choisir un site</option>
+            {% for ville in villes %}
+                <option value="{{ ville.id }}">{{ ville.nom }}</option>
+            {% endfor %}
+        </select>
+
+    </td>
+    <td><input type="text" id="latitude" class="form-control" ></td>
+    <td><input type="text" id="longitude" class="form-control" ></td>
         <td>
-            <a>Ajouter</a>
-        </td>
+            <button class="btn btn-primary" onclick="addLieu()">Ajouter</button>    </td>
     </tr>
 </table>

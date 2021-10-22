@@ -75,31 +75,11 @@ class SortieRepository extends ServiceEntityRepository
 
 
         $sql = $sql . $where;
-        $myfile = fopen("C:\\Users\\fenet2020\\Documents\\file.txt", "w") or die("Unable to open file!");
-        fwrite($myfile, $sql);
-        fclose($myfile);
-
         $stmt = $conn->prepare($sql);
 
+        $sorties = $stmt->execute()->fetchAll();
 
-
-        return $stmt->execute()->fetchAll();
-
-
-
-
-
+        return $sorties;
     }
 
-    /*
-    public function findOneBySomeField($value): ?Sortie
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
