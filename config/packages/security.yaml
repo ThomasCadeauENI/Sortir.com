@@ -22,6 +22,7 @@ security:
             - App\Security\AppAuthenticator
         logout:
           path: app_logout
+          target: /login
           # where to redirect after logout
           # target: app_any_route
         remember_me:
@@ -37,8 +38,10 @@ security:
 
   access_control:
     - { path: ^/admin, roles: ROLE_ADMIN }
-    - { path: ^/lieu, roles: ROLE_ADMIN }
-    - { path: ^/ville, roles: ROLE_ADMIN }
+    - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/, role: ROLE_USER }
+    - { path: ^/gestion_ville, roles: ROLE_ADMIN }
+    - { path: ^/gestion_lieu, roles: ROLE_ADMIN }
     - { path: ^/orgnaisateur, roles: ROLE_ORGA}
     - { path: ^/utilisateur, roles: ROLE_USER }
 

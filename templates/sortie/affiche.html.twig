@@ -3,6 +3,7 @@
 {% block body %}
     <div class="container mt-4">
         <div class="text-center mb-5"><h2>Afficher une sortie</h2></div>
+        <div class="text-center mb-5 text-danger"><h2>Sortie annulée ! </h2></div>
         <div class="row col mb-5">
             <div class="col-6">
                 <div class="col mb-2">
@@ -83,7 +84,19 @@
                     </div>
                 </div>
                 {% endif %}
+                {% if sortie.etat == "Annulée" %}
+                    <div class="col">
+                        <div class="row">
+                            <div class="text-danger col-6">Motif d'annulation : </div>
+
+                            <div class="col-6">
+                                <textarea class="form-control" readonly>{{ sortie.motif }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
+
         </div>
     </div>
     <div class="ml-3">
