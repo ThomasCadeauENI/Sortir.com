@@ -40,7 +40,7 @@
                 {% elseif sortie.etat != "En création" and date(sortie.date_fin_inscription) < date()%}
                     {% if sortie.etat != "Annulée" %}
                         <p> - </p>
-                        <a href="{{ path('inscription_sortie',{ 'id': sortie.id }) }}">S'inscrire</a>
+                        <a href="{{ path('participer_sortie',{ 'id': sortie.id }) }}">S'inscrire</a>
                     {% endif %}
                 {% endif %}
 

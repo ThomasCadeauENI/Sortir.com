@@ -201,5 +201,24 @@ class SortieController extends AbstractController
 
         ]);
     }
+
+    /**
+     * @Route ("/participer/{id}", requirements={"id"="\d+"}, name="participer_sortie")
+     */
+    public function participer(Request $request, Sortie $sortie)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $user_session = $this->getUser()->getUsername();
+        $user = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $user_session));
+        $sortie->addParticipant($user);
+        $em->persist($sortie);
+        $em->flush();
+
+        return $this->render('sortie/index.html.twig', [
+            'sortie' => $sortie,
+        ]);
+    }
+
 }
 
