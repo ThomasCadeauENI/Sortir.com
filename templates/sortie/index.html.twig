@@ -17,8 +17,8 @@
                     <div class="col">
                         <select class="form-control" name="site" id="site">
                             <option value="">Choisir un site</option>
-                            {% for ville in villes %}
-                                <option value="{{ ville.id }}">{{ ville.nom }}</option>
+                            {% for lieu in lieux %}
+                                <option value="{{ lieu.id }}">{{ lieu.nom }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -79,8 +79,7 @@
     </div>
     {% if is_granted('ROLE_ORGA') %}
         <div class="col-2">
-            <a href="./creer" target="_blank"> <button class="button btn-primary btn-lg mt-4">Créer une sortie </button> </a>
-        </div>
+            <a href="{{ path('creer') }}"> <button class="button btn-primary btn-lg mt-4">Créer une sortie </button> </a>        </div>
     {% endif %}
 </div>
 <script>

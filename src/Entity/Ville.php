@@ -6,6 +6,7 @@ use App\Repository\VilleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass=VilleRepository::class)
@@ -25,7 +26,9 @@ class Ville
     private $nom;
 
     /**
+     * @MaxDepth (2)
      * @ORM\OneToMany(targetEntity=Lieu::class, mappedBy="id_ville")
+     *
      */
     private $lieus;
 
@@ -53,6 +56,7 @@ class Ville
 
     /**
      * @return Collection|Lieu[]
+     * @MaxDepth (2)
      */
     public function getLieus(): Collection
     {

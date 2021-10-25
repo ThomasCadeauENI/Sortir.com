@@ -13,6 +13,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\SortieType;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 #[Route('/sortie', 'sortie_')]
 class SortieController extends AbstractController
@@ -31,12 +35,12 @@ class SortieController extends AbstractController
         }
 
         $entityManager = $this->getDoctrine();
-        $repo = $entityManager->getRepository(Ville::class);
-        $villes = $repo->findAll();
+        $repo = $entityManager->getRepository(Lieu::class);
+        $lieux = $repo->findAll();
 
 
         return $this->render('sortie/index.html.twig', [
-            'villes' => $villes,
+            'lieux' => $lieux,
             'date' => date('d/m/Y')
         ]);
     }
@@ -61,6 +65,7 @@ class SortieController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
             $em->flush();
+            return $this->redirectToRoute('homepage');
         }
 
         return $this->render('sortie/creer_sortie.html.twig', [
@@ -78,7 +83,8 @@ class SortieController extends AbstractController
         //$sortie = $this->getDoctrine()->getRepository(Sortie::class)->find($id);
         $lieu = $this->getDoctrine()->getRepository(Lieu::class)->find($sortie->getIdLieu());
         $ville = $this->getDoctrine()->getRepository(Ville::class)->find($lieu->getIdVille());
-        if(strtotime($sortie->getDateSortie()->format('Y-m-d'))< date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) )){
+        $month_ago = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
+        if($sortie->getDateSortie()->format('Y-m-d')< $month_ago){
             return $this->redirectToRoute('homepage');
         }
 
@@ -107,13 +113,15 @@ class SortieController extends AbstractController
     /**
      * @Route ("/data_lieu/", name="data_lieu")
      */
-    public function data_lieu(Response $response)
+    public function data_lieu(Request $request)
     {
-        $id_lieu = $response->get('id_lieu');
+        $id_lieu = $request->get('id_lieu');
         $entityManager = $this->getDoctrine();
         $repo = $entityManager->getRepository(Lieu::class);
         $lieu = $repo->find($id_lieu);
-        return array($lieu->getRue(), $lieu->getCodePostal());
+        $lieu->setIdVille(null);
+        return $this->json($lieu);
+        //return json_encode($lieu);
     }
 
     /**
@@ -123,7 +131,6 @@ class SortieController extends AbstractController
         $entityManager = $this->getDoctrine();
         $repoS = $entityManager->getRepository(Sortie::class);
         $repoU = $entityManager->getRepository(Utilisateur::class);
-
         $id_site = $request->get('id_site');
         $id_user = $request->get('id_user');
         $nom_sortie = $request->get('nom_sortie');
@@ -135,7 +142,13 @@ class SortieController extends AbstractController
         $sortiesPasse = $request->get('sortiesPasse');
 
         $user = $this->getUser();
-        $sorties = $repoS->findAllForDtTableSorties($id_site, $user->getId(), $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse);
+        $sorties_str = $repoS->findAllForDtTableSorties($id_site, $user->getId(), $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse);
+        $sorties = array();
+        foreach($sorties_str as $s){
+            $sortie = $repoS->find($s["id"]);
+            array_push($sorties, $sortie);
+        }
+
         $utilisateurs = $repoU->findAll();
         return $this->render('partialView/DtTableSorties.html.twig', [
             'sorties' => $sorties,
@@ -179,9 +192,6 @@ class SortieController extends AbstractController
         ]);
     }
 
-
-
-
     /**
      * @Route ("/annuler/{id}", requirements={"id"="\d+"}, name="annuler_sortie")
      */
@@ -205,18 +215,6 @@ class SortieController extends AbstractController
         ]);
     }
     /**
-     * @Route ("/inscription/{id}",name="inscription_sortie")
-     */
-    public function inscription(Request $request, Sortie $sortie)
-    {
-
-        return $this->render('sortie/annuler.html.twig', [
-            'sortie' => $sortie,
-
-        ]);
-    }
-
-    /**
      * @Route ("/participer/{id}", requirements={"id"="\d+"}, name="participer_sortie")
      */
     public function participer(Request $request, Sortie $sortie)
@@ -225,14 +223,54 @@ class SortieController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $user_session = $this->getUser()->getUsername();
         $user = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $user_session));
-        $sortie->addParticipant($user);
-        $em->persist($sortie);
-        $em->flush();
+        if(count($sortie->getParticipants()) + 1 <= $sortie->getNbPlace()){
+            $sortie->addParticipant($user);
+            $em->persist($sortie);
+            $em->flush();
+            $this->addFlash('success', 'Vous faites partie des participants de la sortie : '. $sortie->getNom()."!");
+        }else{
+            $this->addFlash('danger', 'Aucune place disponible pour la sortie : '. $sortie->getNom()."!");
 
-        return $this->render('sortie/index.html.twig', [
-            'sortie' => $sortie,
-        ]);
+        }
+
+        return $this->redirectToRoute('homepage');
+    }
+
+    /**
+     * @Route ("/desister/{id}", requirements={"id"="\d+"}, name="desister_sortie")
+     */
+    public function desister(Request $request, Sortie $sortie)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $user_session = $this->getUser();
+        $user = $this->getDoctrine()->getRepository(Utilisateur::class)->find($user_session->getId());
+        if(!$sortie->getParticipants()->contains('id', $user->getID())){
+            $sortie->removeParticipant($user);
+            $em->persist($sortie);
+            $em->flush();
+            $this->addFlash('success', 'Vous ne faites plus partie des participants de la sortie : '. $sortie->getNom()."!");
+        }
+
+        return $this->redirectToRoute('homepage');
+    }
+
+    /**
+     * @Route ("/publish/{id}", requirements={"id"="\d+"}, name="publier_sortie")
+     */
+    public function publier(Request $request, Sortie $sortie)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $sortie->setEtat("En cours");
+        $user_session = $this->getUser();
+        if($sortie->getOrganisateur()->getId() == $user_session->getId())
+        {
+            $em->persist($sortie);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('homepage');
     }
 
 }
-
