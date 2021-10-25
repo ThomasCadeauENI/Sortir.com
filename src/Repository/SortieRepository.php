@@ -38,13 +38,13 @@ class SortieRepository extends ServiceEntityRepository
     /**
      * @return Sortie[] Returns an array of Sortie objects
      */
-    public function findAllForDtTableSorties($month, $year,$id_site, $id_user, $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse)
+    public function findAllForDtTableSorties($id_site, $id_user, $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse)
     {
         $conn = $this->getEntityManager()
             ->getConnection();
         $sql = "select * from sortie s left join sortie_utilisateur su on s.id = su.sortie_id ";
-        $where = "WHERE strftime('%m', s.date_sortie) = '".$month."' 
-            and strftime('%Y', s.date_sortie) = '".$year."'";
+        $last_mois = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
+        $where = "WHERE s.date_sortie BETWEEN '".$last_mois."' AND '2021-10-22 23:59:59'";
 
         if($id_site!= ""|| $nom_sortie!=""|| ($start !="" && $end != "") || $orga== "true"||$inscrit== "true"||$noninscrit== "true"||$sortiesPasse== "true")
         {

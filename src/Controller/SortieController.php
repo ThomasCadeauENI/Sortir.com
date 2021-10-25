@@ -78,7 +78,9 @@ class SortieController extends AbstractController
         //$sortie = $this->getDoctrine()->getRepository(Sortie::class)->find($id);
         $lieu = $this->getDoctrine()->getRepository(Lieu::class)->find($sortie->getIdLieu());
         $ville = $this->getDoctrine()->getRepository(Ville::class)->find($lieu->getIdVille());
-
+        if(strtotime($sortie->getDateSortie()->format('Y-m-d'))< date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) )){
+            return $this->redirectToRoute('homepage');
+        }
 
         /*
          * Participants []
@@ -103,6 +105,18 @@ class SortieController extends AbstractController
     }
 
     /**
+     * @Route ("/data_lieu/", name="data_lieu")
+     */
+    public function data_lieu(Response $response)
+    {
+        $id_lieu = $response->get('id_lieu');
+        $entityManager = $this->getDoctrine();
+        $repo = $entityManager->getRepository(Lieu::class);
+        $lieu = $repo->find($id_lieu);
+        return array($lieu->getRue(), $lieu->getCodePostal());
+    }
+
+    /**
      * @Route ("/afficher_DtTableSorties", name="afficher_DtTableSorties")
      */
     public function DtTableSorties(Request $request){
@@ -121,7 +135,7 @@ class SortieController extends AbstractController
         $sortiesPasse = $request->get('sortiesPasse');
 
         $user = $this->getUser();
-        $sorties = $repoS->findAllForDtTableSorties((int) date('m'), (int) date('Y'), $id_site, $user->getId(), $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse);
+        $sorties = $repoS->findAllForDtTableSorties($id_site, $user->getId(), $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse);
         $utilisateurs = $repoU->findAll();
         return $this->render('partialView/DtTableSorties.html.twig', [
             'sorties' => $sorties,

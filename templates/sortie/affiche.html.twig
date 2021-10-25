@@ -3,7 +3,9 @@
 {% block body %}
     <div class="container mt-4">
         <div class="text-center mb-5"><h2>Afficher une sortie</h2></div>
-        <div class="text-center mb-5 text-danger"><h2>Sortie annulée ! </h2></div>
+        {% if sortie.etat == "Annulée" %}
+            <div class="text-center mb-5 text-danger"><h2>Sortie annulée ! </h2></div>
+        {% endif %}
         <div class="row col mb-5">
             <div class="col-6">
                 <div class="col mb-2">
