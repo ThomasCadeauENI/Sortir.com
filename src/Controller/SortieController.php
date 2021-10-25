@@ -122,10 +122,11 @@ class SortieController extends AbstractController
 
         $user = $this->getUser();
         $sorties = $repoS->findAllForDtTableSorties((int) date('m'), (int) date('Y'), $id_site, $user->getId(), $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse);
-
+        $utilisateurs = $repoU->findAll();
         return $this->render('partialView/DtTableSorties.html.twig', [
             'sorties' => $sorties,
-            'user' => $user
+            'user' => $user,
+            'utilisateurs' => $utilisateurs,
         ]);
 
     }
@@ -164,26 +165,40 @@ class SortieController extends AbstractController
         ]);
     }
 
+
+
+
     /**
      * @Route ("/annuler/{id}", requirements={"id"="\d+"}, name="annuler_sortie")
      */
-    public function annuler(Request $request, Sortie $sortie)
+    public function annuler(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+        $sortie = $em->getRepository(Sortie::class)->find($request->get('id'));
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
-        $em = $this->getDoctrine()->getManager();
 
         if ($form->isSubmitted()) {
-            $sortie->setEtat("Annule");
-
-
+            $sortie->setEtat("Annulée");
             $em->persist($sortie);
             $em->flush();
+            return $this->redirectToRoute('homepage');
         }
 
         return $this->render('sortie/annuler.html.twig', [
             'sortie' => $sortie,
             'form' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route ("/inscription/{id}",name="inscription_sortie")
+     */
+    public function inscription(Request $request, Sortie $sortie)
+    {
+
+        return $this->render('sortie/annuler.html.twig', [
+            'sortie' => $sortie,
+
         ]);
     }
 }
