@@ -11,7 +11,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+
 use App\Form\SortieType;
 
 #[Route('/sortie', 'sortie_')]
@@ -165,9 +167,6 @@ class SortieController extends AbstractController
         ]);
     }
 
-
-
-
     /**
      * @Route ("/annuler/{id}", requirements={"id"="\d+"}, name="annuler_sortie")
      */
@@ -215,10 +214,29 @@ class SortieController extends AbstractController
         $em->persist($sortie);
         $em->flush();
 
-        return $this->render('sortie/index.html.twig', [
-            'sortie' => $sortie,
-        ]);
+        return $this->redirectToRoute('homepage');
     }
 
+
+    public function rempliLieu(Request $request)
+    {
+
+        if($request->isXmlHttpRequest()) // pour vérifier la présence d'une requete Ajax
+        {
+            $id = $request->request->get('id');
+            $selecteur = $request->request->get('select');
+
+            if ($id != null)
+            {
+                $data = $this->getDoctrine()
+                    ->getManager()
+                    ->getRepository('sdzBikindBundle:'.$selecteur)
+                    ->$selecteur($id);
+
+                return new JsonResponse($data);
+            }
+        }
+        return new Response("Nonnn ....");
+    }
 }
 
