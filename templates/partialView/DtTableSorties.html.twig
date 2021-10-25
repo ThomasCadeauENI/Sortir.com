@@ -1,4 +1,4 @@
-<table class="table">
+<table class="table" style="width:98%!important">
     <tr>
         <th>Nom de la sortie</th>
         <th>Date de la sortie</th>
@@ -9,36 +9,49 @@
         <th>Organisateur</th>
         <th>Actions</th>
     </tr>
-    <tr>
         {% for sortie in sorties %}
-            <td>{{ sortie.nom }}</td>
+        <tr>
+            <td><p>{{ sortie.nom }}</p></td>
             <td>{{ sortie.date_sortie|date("d-m-Y H:i") }}</td>
             <td>{{ sortie.date_fin_inscription }}</td>
-            <td>/{{ sortie.nb_place }}</td>
-            <td>
-                {% if sortie.id in user.id_sorties %}
-                <span>X</span>
-                {% endif %}
-            </td>
+            <td>0/{{ sortie.nb_place }}</td>
             <td>{{ sortie.etat }}</td>
-            <td>d</td>
-        <td>
+            <td>
+            </td>
+            <td>
+                {% for utilisateur in utilisateurs%}
+                    {% if utilisateur.id == sortie.organisateur_id  %}
+                        {{ utilisateur.pseudo }}
+                    {% endif %}
+                {% endfor %}
+                </td>
+        <td class="row">
             <a href="{{ path('afficher_sortie',{ 'id': sortie.id }) }}">Afficher</a>
             {% if sortie.organisateur_id == app.user.id %}
-                <a href="{{  path('afficher_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
+                {% if sortie.etat != "Annulée" %}
+                    <a href="{{  path('annuler_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
+                {% endif %}
             {% else %}
-                {% if sortie.etat != "En création" and date(sortie.date_sortie) < date() and sortie.id in user.sorties %}
-                    <a> - Se désister</a>
-                {% elseif sortie.etat != "En création" and date(sortie.date_fin_inscription) < date() and sortie.id not in user.sorties%}
-                    <a> - S'inscrire</a>
+                {% if sortie.etat != "En création" and date(sortie.date_sortie) < date() %}
+                    {% if sortie.etat != "Annulée" %}
+                        <p> - </p>
+                        <a>Se désister</a>
+                    {% endif %}
+                {% elseif sortie.etat != "En création" and date(sortie.date_fin_inscription) < date()%}
+                    {% if sortie.etat != "Annulée" %}
+                        <p> - </p>
+                        <a href="{{ path('participer_sortie',{ 'id': sortie.id }) }}">S'inscrire</a>
+                    {% endif %}
                 {% endif %}
 
                 {% if sortie.etat == "En création" %}
                     <a>Modifier</a>
-                    <a> - Publier</a>
+                    <p> - </p>
+                    <a>Publier</a>
                 {% endif %}
             {% endif %}
             </td>
+        </tr>
         {% endfor %}
-    </tr>
+
 </table>

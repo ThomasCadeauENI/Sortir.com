@@ -79,11 +79,10 @@
     </div>
     {% if is_granted('ROLE_ORGA') %}
         <div class="col-2">
-            <button class="button btn-primary btn-lg mt-4">Créer une sortie </button>
+            <a href="./creer" target="_blank"> <button class="button btn-primary btn-lg mt-4">Créer une sortie </button> </a>
         </div>
     {% endif %}
 </div>
-<input class="d-none" id="id_user" value="{{ app.user.id}}">
 <script>
     $( document ).ready(function() {
         $.ajax({
@@ -98,20 +97,17 @@
         var nom_sortie = $("#search").val();
         var start = $("#start").val();
         var end = $("#end").val();
-        var is_user =$("#id_user").val();
         var orga =$("#orga").is(':checked');
         var inscrit = $("#inscrit").is(':checked');
         var noninscrit = $("#noninscrit").is(':checked');
         var sortiesPasse = $("#sortiesPasse").is(':checked');
         $.ajax({
             url:"{{ path('afficher_DtTableSorties') }}",
-            data: { "id_site": id_site,"id_user": is_user, "nom_sortie":nom_sortie, "start":start, "end":end, "orga":orga, "inscrit":inscrit, "noninscrit":noninscrit, "sortiesPasse":sortiesPasse},
+            data: { "id_site": id_site, "nom_sortie":nom_sortie, "start":start, "end":end, "orga":orga, "inscrit":inscrit, "noninscrit":noninscrit, "sortiesPasse":sortiesPasse},
             success: function(data) {
                 $("#dtTable").html(data);
             }
         });
-
-
 
     }
 </script>

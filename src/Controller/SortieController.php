@@ -6,6 +6,7 @@ use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\Utilisateur;
 use App\Entity\Ville;
+use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,17 +48,16 @@ class SortieController extends AbstractController
     public function creer_sortie(Request $request): Response
     {
         $sortie = new Sortie();
-
         $form = $this->createForm(SortieType::class, $sortie);
-
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
 
-            $sortie->setEtat('NC');
+        if ($form->isSubmitted()) {
 
-            /* TODO - RECUP L'ID DE L'ORGA */
-            $sortie->setOrganisateur($this->getUser()->getID());
-
+            $orga_session = $this->getUser()->getUsername();
+            $organisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $orga_session));
+            $sortie->setOrganisateur($organisateur);
+            $sortie->setEtat('En creation');
+            $sortie->addParticipant($organisateur);
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
             $em->flush();
@@ -68,6 +68,7 @@ class SortieController extends AbstractController
         ]);
     }
 
+
     /**
      * @Route ("/afficher/{id}", requirements={"id"="\d+"}, name="afficher_sortie")
      */
@@ -77,7 +78,9 @@ class SortieController extends AbstractController
         //$sortie = $this->getDoctrine()->getRepository(Sortie::class)->find($id);
         $lieu = $this->getDoctrine()->getRepository(Lieu::class)->find($sortie->getIdLieu());
         $ville = $this->getDoctrine()->getRepository(Ville::class)->find($lieu->getIdVille());
-
+        if(strtotime($sortie->getDateSortie()->format('Y-m-d'))< date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) )){
+            return $this->redirectToRoute('homepage');
+        }
 
         /*
          * Participants []
@@ -85,9 +88,8 @@ class SortieController extends AbstractController
          *      Participants.add(utilisateur)
          *
          */
-        $participants = $sortie->getParticipants();
 
-        dd($participants);
+        $participants = $sortie->getParticipants();
 
         return $this->render('sortie/affiche.html.twig', [
             'sortie' => $sortie,
@@ -100,6 +102,18 @@ class SortieController extends AbstractController
     #[Route('/profil', 'profil')]
     public function profil(){
         return $this->render ('utilisateur/profil.html.twig');
+    }
+
+    /**
+     * @Route ("/data_lieu/", name="data_lieu")
+     */
+    public function data_lieu(Response $response)
+    {
+        $id_lieu = $response->get('id_lieu');
+        $entityManager = $this->getDoctrine();
+        $repo = $entityManager->getRepository(Lieu::class);
+        $lieu = $repo->find($id_lieu);
+        return array($lieu->getRue(), $lieu->getCodePostal());
     }
 
     /**
@@ -121,13 +135,104 @@ class SortieController extends AbstractController
         $sortiesPasse = $request->get('sortiesPasse');
 
         $user = $this->getUser();
-        $sorties = $repoS->findAllForDtTableSorties((int) date('m'), (int) date('Y'), $id_site, $user->getId(), $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse);
-
+        $sorties = $repoS->findAllForDtTableSorties($id_site, $user->getId(), $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse);
+        $utilisateurs = $repoU->findAll();
         return $this->render('partialView/DtTableSorties.html.twig', [
             'sorties' => $sorties,
-            'user' => $user
+            'user' => $user,
+            'utilisateurs' => $utilisateurs,
         ]);
 
-}
+    }
+
+    /**
+     * @Route ("/modifier/{id}", requirements={"id"="\d+"}, name="modifier_sortie")
+     */
+    public function modifier(Request $request, Sortie $sortie){
+
+        $form = $this->createForm(SortieType::class, $sortie);
+        $form->handleRequest($request);
+
+        $path = 'sortie/modifier.html.twig';
+
+        if ($form->isSubmitted()) {
+            $em = $this->getDoctrine()->getManager();
+            if ($form->get('modifier')->isClicked()){
+                $em->persist($sortie);
+            }
+            if ($form->get('supprimer')->isClicked()) {
+                $em->remove($sortie);
+            }
+            if ($form->get('publier')->isClicked()){
+                $sortie->setEtat('Ouvert');
+                $em->persist($sortie);
+            }
+            if ($form->get('annuler')->isClicked()) {
+                $path = 'sortie/modifier.html.twig';
+            }
+            $em->flush();
+        }
+
+        return $this->render($path, [
+            'sortie' => $sortie,
+            'form' => $form->createView()
+        ]);
+    }
+
+
+
+
+    /**
+     * @Route ("/annuler/{id}", requirements={"id"="\d+"}, name="annuler_sortie")
+     */
+    public function annuler(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $sortie = $em->getRepository(Sortie::class)->find($request->get('id'));
+        $form = $this->createForm(SortieType::class, $sortie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $sortie->setEtat("Annulée");
+            $em->persist($sortie);
+            $em->flush();
+            return $this->redirectToRoute('homepage');
+        }
+
+        return $this->render('sortie/annuler.html.twig', [
+            'sortie' => $sortie,
+            'form' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route ("/inscription/{id}",name="inscription_sortie")
+     */
+    public function inscription(Request $request, Sortie $sortie)
+    {
+
+        return $this->render('sortie/annuler.html.twig', [
+            'sortie' => $sortie,
+
+        ]);
+    }
+
+    /**
+     * @Route ("/participer/{id}", requirements={"id"="\d+"}, name="participer_sortie")
+     */
+    public function participer(Request $request, Sortie $sortie)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $user_session = $this->getUser()->getUsername();
+        $user = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $user_session));
+        $sortie->addParticipant($user);
+        $em->persist($sortie);
+        $em->flush();
+
+        return $this->render('sortie/index.html.twig', [
+            'sortie' => $sortie,
+        ]);
+    }
 
 }
+
