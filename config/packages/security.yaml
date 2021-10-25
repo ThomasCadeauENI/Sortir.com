@@ -44,6 +44,8 @@ security:
     - { path: ^/gestion_lieu, roles: ROLE_ADMIN }
     - { path: ^/orgnaisateur, roles: ROLE_ORGA}
     - { path: ^/utilisateur, roles: ROLE_USER }
+    - { path: ^/, role: ROLE_USER }
+    - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
   role_hierarchy:
     ROLE_ORGA : ROLE_USER
