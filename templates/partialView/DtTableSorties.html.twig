@@ -11,25 +11,37 @@
     </tr>
         {% for sortie in sorties %}
         <tr>
-            <td>{{ sortie.nom }}</td>
+            <td><p>{{ sortie.nom }}</p></td>
             <td>{{ sortie.date_sortie|date("d-m-Y H:i") }}</td>
             <td>{{ sortie.date_fin_inscription }}</td>
             <td>0/{{ sortie.nb_place }}</td>
             <td>{{ sortie.etat }}</td>
             <td>
             </td>
-            <td>sortie.pseudo</td>
+            <td>
+                {% for utilisateur in utilisateurs%}
+                    {% if utilisateur.id == sortie.organisateur_id  %}
+                        {{ utilisateur.pseudo }}
+                    {% endif %}
+                {% endfor %}
+                </td>
         <td class="row">
             <a href="{{ path('afficher_sortie',{ 'id': sortie.id }) }}">Afficher</a>
             {% if sortie.organisateur_id == app.user.id %}
-                <a href="{{  path('annuler_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
+                {% if sortie.etat != "Annulée" %}
+                    <a href="{{  path('annuler_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
+                {% endif %}
             {% else %}
-                {% if sortie.etat != "En création" and date(sortie.date_sortie) < date() and sortie.id in user.sorties %}
-                    <p> - </p>
-                    <a>Se désister</a>
-                {% elseif sortie.etat != "En création" and date(sortie.date_fin_inscription) < date() and sortie.id not in user.sorties%}
-                    <p> - </p>
-                    <a href="{{ path('inscription_sortie',{ 'id': sortie.id }) }}">S'inscrire</a>
+                {% if sortie.etat != "En création" and date(sortie.date_sortie) < date() %}
+                    {% if sortie.etat != "Annulée" %}
+                        <p> - </p>
+                        <a>Se désister</a>
+                    {% endif %}
+                {% elseif sortie.etat != "En création" and date(sortie.date_fin_inscription) < date()%}
+                    {% if sortie.etat != "Annulée" %}
+                        <p> - </p>
+                        <a href="{{ path('inscription_sortie',{ 'id': sortie.id }) }}">S'inscrire</a>
+                    {% endif %}
                 {% endif %}
 
                 {% if sortie.etat == "En création" %}
