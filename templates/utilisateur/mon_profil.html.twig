@@ -36,6 +36,7 @@
                     <div class="col">Mon email : </div>
                     <div class="col">{{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}</div>
                 </div>
+
                 <div class="row mb-2">
                     <div class="col">Mot de passe : </div>
                     <div class="col">{{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}</div>
@@ -44,6 +45,7 @@
                     <div class="col">Confirmation : </div>
                     <div class="col">{{ form_widget(form.ConfirmPassword, {'attr': {'class': 'form-control'}}) }}</div>
                 </div>
+
                 <div class="row mb-2">
                     <div class="col">Ville de rattachement : </div>
                     <div class="col">{{ form_widget(form.id_ville, {'attr': {'class': 'form-control'}}) }}</div>
@@ -54,9 +56,9 @@
 </div>
 <div class="col-md-6 offset-md-3 row">
     <div class="col text-center"><button class="btn btn-primary btn-lg btn-success">Enregistrer</button></div>
-    <div class="col text-center"><button class="btn btn-primary btn-lg btn-danger">Annuler</button></div>
-</div>
+    <div class="col text-center"><button type="reset" class="btn btn-primary btn-lg btn-danger" onclick="window.location='{{ path('homepage') }}'">Annuler</button></div>
     {{ form_end(form) }}
+</div>
 <script>
 
     $( document ).ready(function() {

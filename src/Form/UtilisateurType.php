@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Utilisateur;
 use App\Entity\Ville;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -23,12 +24,13 @@ class UtilisateurType extends AbstractType
             ->add('email', EmailType::class, [
                 'required' => true
             ])
-            ->add('password', PasswordType::class, [
-                'required' => true
+           ->add('password', PasswordType::class, [
+                'mapped' => false,
+                'required' => true,
             ])
             ->add('ConfirmPassword', PasswordType::class, [
                 'mapped' => false,
-                'required' => true
+                'required' => true,
             ])
             ->add('pseudo', TextType::class, [
                 'required' => true
