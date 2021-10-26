@@ -53,6 +53,14 @@ class UtilisateurController extends AbstractController
                 $utilisateur->setNumTel($num_tel);
                 $utilisateur->setEmail($email);
 
+                $name = $_FILES[$form->getName('photo')]['name'];
+                $tmp = $_FILES[$form->getName('photo')]['tmp_name'];
+
+                $nom = $name['photo'];
+                move_uploaded_file($tmp['photo'], $nom);
+                $utilisateur->setPhoto($nom);
+
+
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($utilisateur);
                 $em->flush();
@@ -64,6 +72,15 @@ class UtilisateurController extends AbstractController
         return $this->render('utilisateur/mon_profil.html.twig', [
             'form' => $form->createView(),
             'villes' => $villes,
+        ]);
+    }
+
+    /**
+     * @Route("/profil/{id}", name="profil")
+     */
+    public function monProfil(Utilisateur  $utilisateur): Response{
+        return $this->render('utilisateur/profil.html.twig', [
+            'user' => $utilisateur,
         ]);
     }
 }
