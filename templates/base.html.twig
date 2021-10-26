@@ -67,6 +67,9 @@
               <ul class="nav navbar-nav ms-auto w-100 justify-content-end">
                   {% if is_granted('ROLE_ADMIN') %}
                       <li class="nav-item">
+                          <a class="nav-link" href="{{ path('gestion_utilisateurs') }}">Utilisateurs</a>
+                      </li>
+                      <li class="nav-item">
                           <a class="nav-link" href="{{ path('gestion_ville') }}">Villes</a>
                       </li>
                       <li class="nav-item">
