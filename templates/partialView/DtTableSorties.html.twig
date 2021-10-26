@@ -32,7 +32,7 @@
             <td class="row">
                 <a href="{{ path('afficher_sortie',{ 'id': sortie.id }) }}">Afficher</a>
                 {% if sortie.etat != "En creation" %}
-                    {% if sortie.Organisateur.id == app.user.id and sortie.etat != "Annulée" %}
+                    {% if ((sortie.Organisateur.id == app.user.id or is_granted('ROLE_ADMIN')) and sortie.etat != "Annulée") %}
                         <a href="{{  path('annuler_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
                     {% elseif sortie.etat != "En création" and sortie.etat != "Annulée" and date(sortie.dateFinInscription) > date() and user not in sortie.Participants%}
                         -
