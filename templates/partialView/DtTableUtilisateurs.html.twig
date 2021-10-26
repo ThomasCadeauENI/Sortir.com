@@ -1,0 +1,20 @@
+<table class="table">
+    <tr>
+        <th>Pseudo</th>
+        <th>Nom & Prénom</th>
+        <th>email</th>
+        <th>role</th>
+    </tr>
+    {% for u in users %}
+        <tr>
+            <td>{{ u.pseudo }}</td>
+            <td>{{ u.nom }} {{ u.prenom }}</td>
+            <td>{{ u.email }}</td>
+            <td>{% for role in u.roles %}
+                <p>{{ role }}</p>
+                {% endfor %}
+            </td>
+        </tr>
+
+    {% endfor %}
+</table>
