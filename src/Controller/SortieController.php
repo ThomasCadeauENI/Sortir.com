@@ -8,6 +8,7 @@ use App\Entity\Utilisateur;
 use App\Entity\Ville;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Monolog\Handler\Curl\Util;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,24 +57,30 @@ class SortieController extends AbstractController
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
+        $user = $this->getDoctrine()->getRepository(Utilisateur::class)->find($this->getUser()->getId());
+        if($user->getActif()){
+            if ($form->isSubmitted()) {
 
-        if ($form->isSubmitted()) {
+                $orga_session = $this->getUser()->getUsername();
+                $organisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $orga_session));
+                $sortie->setOrganisateur($user);
+                $sortie->setEtat('En creation');
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($sortie);
+                $em->flush();
+                $this->addFlash("success", "La sortie ".$sortie->getNom(). " prévue pour le ".$sortie->getDateSortie()->format("d/m/Y")." a bien été créé");
+                return $this->redirectToRoute('homepage');
+            }
 
-            $orga_session = $this->getUser()->getUsername();
-            $organisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $orga_session));
-            $sortie->setOrganisateur($organisateur);
-            $sortie->setEtat('En creation');
-            $sortie->addParticipant($organisateur);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($sortie);
-            $em->flush();
-            $this->addFlash("success", "La sortie ".$sortie->getNom(). " prévue pour le ".$sortie->getDateSortie()->format("d/m/Y")." a bien été créé");
+            return $this->render('sortie/creer_sortie.html.twig', [
+                'form' => $form->createView()
+            ]);
+        }else{
+            $this->addFlash("danger", "Vous n'êtes pas considéré comme un utilisateur actif !");
             return $this->redirectToRoute('homepage');
         }
 
-        return $this->render('sortie/creer_sortie.html.twig', [
-            'form' => $form->createView()
-        ]);
+
     }
 
 
@@ -118,8 +125,9 @@ class SortieController extends AbstractController
      */
     public function lieu_json(Request $request)
     {
-        $id_lieu = $request->get('id_lieu');
+        $id_ville = $request->get('id_ville');
         $entityManager = $this->getDoctrine();
+
         $repo = $entityManager->getRepository(Lieu::class);
         $lieu = $repo->find($id_lieu);
 
@@ -134,7 +142,6 @@ class SortieController extends AbstractController
         $resultat = $serializer->serialize($lieu, 'json');
         return new JsonResponse(json_decode($resultat));
     }
-
     /**
      * @Route("/data_ville", name="data_ville")
      */
@@ -211,37 +218,44 @@ class SortieController extends AbstractController
 
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
-
+        $user = $this->getDoctrine()->getRepository(Utilisateur::class)->find($this->getUser()->getId());
         $path = 'sortie/modifier.html.twig';
-
-        if ($form->isSubmitted()) {
-            $em = $this->getDoctrine()->getManager();
-            if ($form->get('modifier')->isClicked()){
-                $em->persist($sortie);
-                $this->addFlash("success","Sortie modifié avec succès!");
-            }
-            if ($form->get('supprimer')->isClicked()) {
-                $em->remove($sortie);
+        if($sortie->getOrganisateur()->getId() == $user->getId() && $user->getActif()) {
+            if ($form->isSubmitted()) {
+                $em = $this->getDoctrine()->getManager();
+                if ($form->get('modifier')->isClicked()) {
+                    $em->persist($sortie);
+                    $this->addFlash("success", "Sortie modifié avec succès!");
+                }
+                if ($form->get('supprimer')->isClicked()) {
+                    $em->remove($sortie);
+                    $em->flush();
+                    $this->addFlash("danger", "Sortie à été supprimé avec succès!");
+                    return $this->redirectToRoute('homepage');
+                }
+                if ($form->get('publier')->isClicked()) {
+                    $sortie->setEtat('Ouvert');
+                    $em->persist($sortie);
+                    $this->addFlash("success", "Sortie publié avec succès!");
+                }
+                if ($form->get('annuler')->isClicked()) {
+                    $path = 'sortie/modifier.html.twig';
+                    return $this->redirectToRoute('homepage');
+                }
                 $em->flush();
-                $this->addFlash("danger","Sortie à été supprimé avec succès!");
-                return $this->redirectToRoute('homepage');
             }
-            if ($form->get('publier')->isClicked()){
-                $sortie->setEtat('Ouvert');
-                $em->persist($sortie);
-                $this->addFlash("success","Sortie publié avec succès!");
-            }
-            if ($form->get('annuler')->isClicked()) {
-                $path = 'sortie/modifier.html.twig';
-                return $this->redirectToRoute('homepage');
-            }
-            $em->flush();
+            return $this->render($path, [
+                'sortie' => $sortie,
+                'form' => $form->createView()
+            ]);
+        }elseif($sortie->getOrganisateur()->getId() != $user->getId()){
+            $this->addFlash("danger", "Vous n'êtes pas l'organisateur, vous ne pouvez pas annuler sa sortie!");
+            return $this->redirectToRoute('homepage');
+        }elseif(!$user->getActif()){
+            $this->addFlash("danger", "Vous n'êtes pas un utilisateur actif!");
+            return $this->redirectToRoute('homepage');
         }
-
-        return $this->render($path, [
-            'sortie' => $sortie,
-            'form' => $form->createView()
-        ]);
+        return $this->redirectToRoute('homepage');
     }
 
     /**
@@ -251,20 +265,28 @@ class SortieController extends AbstractController
     {
         $em = $this->getDoctrine()->getManager();
         $sortie = $em->getRepository(Sortie::class)->find($request->get('id'));
-        $form = $this->createForm(SortieType::class, $sortie);
-        $form->handleRequest($request);
+        $user = $em->getRepository(Utilisateur::class)->find($this->getUser()->getId());
+        if($sortie->getOrganisateur()->getId() == $user->getId() && $user->getActif()) {
+            $form = $this->createForm(SortieType::class, $sortie);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            $sortie->setEtat("Annulée");
-            $em->persist($sortie);
-            $em->flush();
+            if ($form->isSubmitted()) {
+                $sortie->setEtat("Annulée");
+                $em->persist($sortie);
+                $em->flush();
+                return $this->redirectToRoute('homepage');
+            }
+            return $this->render('sortie/annuler.html.twig', [
+                'sortie' => $sortie,
+                'form' => $form->createView()
+            ]);
+        }elseif($sortie->getOrganisateur()->getId() != $user->getId()){
+            $this->addFlash("danger", "Vous n'êtes pas l'organisateur, vous ne pouvez pas annuler sa sortie!");
+            return $this->redirectToRoute('homepage');
+        }elseif(!$user->getActif()){
+            $this->addFlash("danger", "Vous n'êtes pas un utilisateur actif!");
             return $this->redirectToRoute('homepage');
         }
-
-        return $this->render('sortie/annuler.html.twig', [
-            'sortie' => $sortie,
-            'form' => $form->createView()
-        ]);
     }
     /**
      * @Route ("/participer/{id}", requirements={"id"="\d+"}, name="participer_sortie")
@@ -273,16 +295,20 @@ class SortieController extends AbstractController
     {
 
         $em = $this->getDoctrine()->getManager();
-        $user_session = $this->getUser()->getUsername();
-        $user = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $user_session));
-        if(count($sortie->getParticipants()) + 1 <= $sortie->getNbPlace()){
-            $sortie->addParticipant($user);
-            $em->persist($sortie);
-            $em->flush();
-            $this->addFlash('success', 'Vous faites partie des participants de la sortie : '. $sortie->getNom()."!");
-        }else{
-            $this->addFlash('danger', 'Aucune place disponible pour la sortie : '. $sortie->getNom()."!");
+        $user = $this->getUser();
+        $user = $this->getDoctrine()->getRepository(Utilisateur::class)->find($user->getId());
+        if($user->getActif()){
+            if(count($sortie->getParticipants()) + 1 <= $sortie->getNbPlace()){
+                $sortie->addParticipant($user);
+                $em->persist($sortie);
+                $em->flush();
+                $this->addFlash('success', 'Vous faites partie des participants de la sortie : '. $sortie->getNom()."!");
+            }else{
+                $this->addFlash('danger', 'Aucune place disponible pour la sortie : '. $sortie->getNom()."!");
 
+            }
+        }else{
+            $this->addFlash("danger", "Vous n'êtes pas un utilisateur actif!");
         }
 
         return $this->redirectToRoute('homepage');
@@ -297,11 +323,15 @@ class SortieController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $user_session = $this->getUser();
         $user = $this->getDoctrine()->getRepository(Utilisateur::class)->find($user_session->getId());
-        if(!$sortie->getParticipants()->contains('id', $user->getId())){
-            $sortie->removeParticipant($user);
-            $em->persist($sortie);
-            $em->flush();
-            $this->addFlash('success', 'Vous ne faites plus partie des participants de la sortie : '. $sortie->getNom()."!");
+        if($user->getActif()){
+            if(!$sortie->getParticipants()->contains('id', $user->getId())){
+                $sortie->removeParticipant($user);
+                $em->persist($sortie);
+                $em->flush();
+                $this->addFlash('success', 'Vous ne faites plus partie des participants de la sortie : '. $sortie->getNom()."!");
+            }
+        }else{
+            $this->addFlash('danger', "Vous n'êtes pas un utilisateur actif !");
         }
 
         return $this->redirectToRoute('homepage');

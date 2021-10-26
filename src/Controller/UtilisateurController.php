@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Utilisateur;
 use App\Entity\Ville;
 use App\Form\UtilisateurType;
+use SplFileObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +35,7 @@ class UtilisateurController extends AbstractController
         if ($form->isSubmitted() && $form->isValid())
         {
             $file = $form['upload_file']->getData();
+
             if ($file)
             {
                 $file_name = $file_uploader->upload($file);
@@ -41,12 +43,47 @@ class UtilisateurController extends AbstractController
                 {
                     $directory = $file_uploader->getTargetDirectory();
                     $full_path = $directory.'/'.$file_name;
-                    // Do what you want with the full path file...
-                    // Why not read the content or parse it !!!
+                    $rowNo = 1;
+                    // $fp is file pointer to file sample.csv
+                    if (($fp = fopen($full_path, "r")) !== FALSE) {
+                        while (($row = fgetcsv($fp, 1000, ";")) !== FALSE) {
+                            $entityManager = $this->getDoctrine();
+                            $repoV = $entityManager->getRepository(Ville::class);
+                            $repoU = $entityManager->getRepository(Utilisateur::class);
+                            if(count($row) == 3 && $row[0]!="nom"&&$row[1]!="prenom"&&$row[2]!="ville" ){
+                                if($repoU->findBy(["nom"=>$row[0], "prenom"=>$row[1]]) == null){
+                                    $user = new Utilisateur();
+                                    $user->setNom($row[0]);
+                                    $user->setPrenom($row[1]);
+                                    $ville= $repoV->find($row[2]);
+                                    $user->setIdVille($ville);
+                                    $user->setActif(true);
+                                    $user->setEmail($user->getPrenom().".".$user->getNom().date('Y')."@campus-zabi.fr");
+                                    $user->setPseudo(substr($user->getPrenom(), 0, 1).$user->getNom());
+                                    //user password 1er lettre prenom + 1er lettre nom + annee d'enregistrement
+                                    $user->setPassword(password_hash(substr($user->getPrenom(), 0, 1).substr($user->getNom(), 0, 1).date('Y'), PASSWORD_BCRYPT));
+
+                                    $em = $this->getDoctrine()->getManager();
+                                    $em->persist($user);
+                                    $em->flush();
+                                    $rowNo++;
+                                    $this->addFlash("success", "Utilisateur ".$user->getNom()." ".$user->getPrenom()." enregistré !");
+                                }
+
+                            }
+
+                        }
+                        fclose($fp);
+                        unlink($full_path);
+                        if($rowNo == 1){
+                            $this->addFlash("danger", "Aucun utilisateur créé! ");
+                        }
+                        return $this->redirectToRoute('gestion_utilisateurs');
+                    }
                 }
                 else
                 {
-                    // Oups, an error occured !!!
+
                 }
             }
         }
@@ -92,6 +129,38 @@ class UtilisateurController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/remove_user", name="remove_user")
+     */
+    public function Remove(Request $request): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $id = $request->get('id');
+        $user = $entityManager->getRepository(Utilisateur::class)->find($id);
+        if($user){
+            $entityManager->remove($user);
+            $entityManager->flush();
+            $this->addFlash("success", "Suppression de l'utilisateur ". $user->getPseudo(). "réussi !");
+        }
+
+        return $this->redirect('gestion_utilisateur');
+    }
+    /**
+     * @Route("/toggleActif", name="toggleActif")
+     */
+    public function toggleActif(Request $request): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $id = $request->get('id');
+        $user = $entityManager->getRepository(Utilisateur::class)->find($id);
+        if($user)
+        {
+            $user->setActif(!$user->getActif());
+            $entityManager->flush();
+        }
+        return $this->redirect('gestion_utilisateur');
+
+    }
     /**
      * @Route("/afficher_DtTableUtilisateurs", name="afficher_DtTableUtilisateurs")
      */

@@ -90,6 +90,7 @@
         </div>
     </div>
     <script>
+
         $("#sortie_id_ville").change(function (){
             $.ajax({
                 url:"{{ path('data_ville') }}",
@@ -98,21 +99,42 @@
                     $("#sortie_id_lieu").empty();
                     for (var i=0; i<data.lieus.length; i++){
                         $("#sortie_id_lieu").append($('<option>', {
-                            value: i,
+                            value: data.lieus[i].id,
                             text: data.lieus[i].nom
                         }));
                     }
+                    $.ajax({
+                        url:"{{ path('data_lieu') }}",
+                        data: { "id_lieu":$("#sortie_id_lieu").val()},
+                        success: function(data) {
+                            $("#rue").html(data.rue);
+                            $("#cdp").html(data.codePostal);
+                            $("#lon").html(data.longitude);
+                            $("#lat").html(data.latitude);
+                        }});
                 }});
         });
         $( document ).ready(function() {
             $.ajax({
-                url:"{{ path('data_lieu') }}",
-                data: { "id_lieu":$("#sortie_id_lieu").val()},
+                url:"{{ path('data_ville') }}",
+                data: { "id_ville":$("#sortie_id_ville").val()},
                 success: function(data) {
-                    $("#rue").html(data.rue);
-                    $("#cdp").html(data.codePostal);
-                    $("#lon").html(data.longitude);
-                    $("#lat").html(data.latitude);
+                    $("#sortie_id_lieu").empty();
+                    for (var i=0; i<data.lieus.length; i++){
+                        $("#sortie_id_lieu").append($('<option>', {
+                            value: data.lieus[i].id,
+                            text: data.lieus[i].nom
+                        }));
+                    }
+                    $.ajax({
+                        url:"{{ path('data_lieu') }}",
+                        data: { "id_lieu":$("#sortie_id_lieu").val()},
+                        success: function(data) {
+                            $("#rue").html(data.rue);
+                            $("#cdp").html(data.codePostal);
+                            $("#lon").html(data.longitude);
+                            $("#lat").html(data.latitude);
+                        }});
                 }});
         });
         $("#sortie_id_lieu").change(function (){
