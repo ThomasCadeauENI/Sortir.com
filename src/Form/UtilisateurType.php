@@ -5,6 +5,8 @@ namespace App\Form;
 use App\Entity\Utilisateur;
 use App\Entity\Ville;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -50,6 +52,14 @@ class UtilisateurType extends AbstractType
                 'class' => Ville::class,
                 'choice_label' => 'nom',
                 'label' => 'Ville'
+            ])
+            ->add("roles", ChoiceType::class, [
+                "choices" => [
+                    "ADMIN" => "ROLE_ADMIN",
+                    "ORGA" => "ROLE_ORGA",
+                    "USER" => "ROLE_USER"
+                ],
+                "mapped" => false
             ]);
     }
 
