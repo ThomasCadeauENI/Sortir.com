@@ -9,6 +9,7 @@ use App\Entity\Ville;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -65,6 +66,7 @@ class SortieController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $em->persist($sortie);
             $em->flush();
+            $this->addFlash("success", "La sortie ".$sortie->getNom(). " prévue pour le ".$sortie->getDateSortie()->format("d/m/Y")." a bien été créé");
             return $this->redirectToRoute('homepage');
         }
 
@@ -125,6 +127,29 @@ class SortieController extends AbstractController
     }
 
     /**
+     * @Route("/data_lieu", name="data_lieu")
+     */
+    public function lieu_json(Request $request)
+    {
+        $id_lieu = $request->get('id_lieu');
+        $entityManager = $this->getDoctrine();
+        $repo = $entityManager->getRepository(Lieu::class);
+        $lieu = $repo->find($id_lieu);
+
+        $encoder = new JsonEncoder();
+        $defaultContext = [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+                return $object->getId();
+            },
+        ];
+        $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
+        $serializer = new Serializer([$normalizer], [$encoder]);
+        $resultat = $serializer->serialize($lieu, 'json');
+        return new JsonResponse(json_decode($resultat));
+    }
+
+
+    /**
      * @Route ("/afficher_DtTableSorties", name="afficher_DtTableSorties")
      */
     public function DtTableSorties(Request $request){
@@ -172,16 +197,22 @@ class SortieController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             if ($form->get('modifier')->isClicked()){
                 $em->persist($sortie);
+                $this->addFlash("success","Sortie modifié avec succès!");
             }
             if ($form->get('supprimer')->isClicked()) {
                 $em->remove($sortie);
+                $em->flush();
+                $this->addFlash("danger","Sortie à été supprimé avec succès!");
+                return $this->redirectToRoute('homepage');
             }
             if ($form->get('publier')->isClicked()){
                 $sortie->setEtat('Ouvert');
                 $em->persist($sortie);
+                $this->addFlash("success","Sortie publié avec succès!");
             }
             if ($form->get('annuler')->isClicked()) {
                 $path = 'sortie/modifier.html.twig';
+                return $this->redirectToRoute('homepage');
             }
             $em->flush();
         }
@@ -262,7 +293,7 @@ class SortieController extends AbstractController
     {
 
         $em = $this->getDoctrine()->getManager();
-        $sortie->setEtat("En cours");
+        $sortie->setEtat("Ouvert");
         $user_session = $this->getUser();
         if($sortie->getOrganisateur()->getId() == $user_session->getId())
         {

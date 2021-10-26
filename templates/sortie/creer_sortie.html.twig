@@ -89,30 +89,30 @@
             {{ form_end(form, {"render_rest":false}) }}
         </div>
     </div>
-<script>
-    $( document ).ready(function() {
-        $.ajax({
-            url:"{{ path('data_lieu') }}",
-            data: { "id_lieu":$("#sortie_id_lieu").val()},
-            success: function(data) {
-                $("#rue").html(data.rue);
-                $("#cdp").html(data.codePostal);
-                $("#lon").html(data.longitude);
-                $("#lat").html(data.latitude);
-        }});
-    });
-    $("#sortie_id_lieu").change(function (){
-        $.ajax({
-            url:"{{ path('data_lieu') }}",
-            data: { "id_lieu":$("#sortie_id_lieu").val()},
-            success: function(data) {
-                $("#rue").html(data.rue);
-                $("#cdp").html(data.codePostal);
-                $("#lon").html(data.longitude);
-                $("#lat").html(data.latitude);            }});
-    });
+    <script>
+        $( document ).ready(function() {
+            $.ajax({
+                url:"{{ path('data_lieu') }}",
+                data: { "id_lieu":$("#sortie_id_lieu").val()},
+                success: function(data) {
+                    $("#rue").html(data.rue);
+                    $("#cdp").html(data.codePostal);
+                    $("#lon").html(data.longitude);
+                    $("#lat").html(data.latitude);
+            }});
+        });
+        $("#sortie_id_lieu").change(function (){
+            $.ajax({
+                url:"{{ path('data_lieu') }}",
+                data: { "id_lieu":$("#sortie_id_lieu").val()},
+                success: function(data) {
+                    $("#rue").html(data.rue);
+                    $("#cdp").html(data.codePostal);
+                    $("#lon").html(data.longitude);
+                    $("#lat").html(data.latitude);            }});
+        });
 
 
 
-</script>
+    </script>
 {% endblock %}
