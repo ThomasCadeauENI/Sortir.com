@@ -27,11 +27,7 @@
                 {% endif %}
             </td>
             <td>
-                {% for utilisateur in utilisateurs%}
-                    {% if utilisateur.id == sortie.Organisateur.id  %}
-                        {{ utilisateur.pseudo }}
-                    {% endif %}
-                {% endfor %}
+                        <a href="{{ path('profil', { 'id': sortie.organisateur.id }) }}">{{ sortie.organisateur.nom }}  {{ sortie.organisateur.prenom }}</a>
                 </td>
         <td class="row">
             <a href="{{ path('afficher_sortie',{ 'id': sortie.id }) }}">Afficher</a>
