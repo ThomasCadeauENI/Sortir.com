@@ -69,6 +69,11 @@ class Utilisateur implements UserInterface
      */
     private $id_ville;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $Actif;
+
 
     public function getId(): ?int
     {
@@ -182,7 +187,7 @@ class Utilisateur implements UserInterface
 
     public function setNom(string $nom): self
     {
-        $this->prenom = $nom;
+        $this->nom = $nom;
 
         return $this;
     }
@@ -219,6 +224,18 @@ class Utilisateur implements UserInterface
     public function setIdVille(?Ville $id_ville): self
     {
         $this->id_ville = $id_ville;
+
+        return $this;
+    }
+
+    public function getActif(): ?bool
+    {
+        return $this->Actif;
+    }
+
+    public function setActif(?bool $Actif): self
+    {
+        $this->Actif = $Actif;
 
         return $this;
     }

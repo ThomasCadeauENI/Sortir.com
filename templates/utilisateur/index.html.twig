@@ -11,20 +11,47 @@
 <div class="container">
     <h1>Gestion des utilisateurs</h1>
     <div class="col">
-        <a href="{{ path('test_upload') }}"><h3>Importer utilisateur(s) via csv : </h3></a>
+        <a href="{{ path('test_upload') }}"><h3>Importer utilisateur(s) via csv</h3></a>
         </div>
     <div id="dtTable" class="mt-3" style=" overflow:auto;"></div>
 
     </div>
 
 <script>
-    $( document ).ready(function() {
+    function myDT(){
         $.ajax({
             url:"{{ path('afficher_DtTableUtilisateurs') }}",
             success: function(data) {
                 $("#dtTable").html(data);
             }
         });
+    }
+    $( document ).ready(function() {
+        myDT();
     });
+    function remove(id){
+        if(confirm("Supprimer l'utilisateur "+ $("#pseudo_" + id).html() + " ?"))
+        {
+            $.ajax({
+                url:"{{ path('remove_user') }}",
+                method: 'POST',
+                data:{id: id },
+                success:function (){
+                    myDT();
+                }
+            });
+        }
+
+    }
+    function toggleActif(id){
+        $.ajax({
+            url:"{{ path('toggleActif') }}",
+            method: 'POST',
+            data:{id: id },
+            success:function (){
+                myDT();
+            }
+        });
+    }
 </script>
 {% endblock %}
