@@ -6,7 +6,7 @@
 <div class="">
     <div class="row">
         <div class="col-2">
-            <img style="border: 4px solid black; overflow: auto" src="/images/{{ user.photo }}">
+            <img style="border: 4px solid black; overflow: auto" src="/images/default_profil.png">
         </div>
         <div class="col-8" style="overflow: auto">
             <div class="text-center"><h2>Mon profil</h2></div>
@@ -58,7 +58,7 @@
     <div class="col text-center"><button class="btn btn-primary btn-lg btn-success">Enregistrer</button></div>
     <div class="col text-center"><button type="reset" class="btn btn-primary btn-lg btn-danger" onclick="window.location='{{ path('homepage') }}'">Annuler</button></div>
 </div>
-    {{ form_end(form) }}
+    {{ form_end(form, {"render_rest":false}) }}
 <script>
 
     $( document ).ready(function() {

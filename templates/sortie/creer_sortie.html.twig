@@ -113,7 +113,6 @@
                             $("#lat").html(data.latitude);
                         }});
                 }});
-
         });
         $( document ).ready(function() {
             $.ajax({
@@ -137,13 +136,13 @@
                             $("#lat").html(data.latitude);
                         }});
                 }});
-
         });
         $("#sortie_id_lieu").change(function (){
             $.ajax({
                 url:"{{ path('data_lieu') }}",
                 data: { "id_lieu":$("#sortie_id_lieu").val()},
                 success: function(data) {
+                    console.log(data);
                     $("#rue").html(data.rue);
                     $("#cdp").html(data.codePostal);
                     $("#lon").html(data.longitude);
