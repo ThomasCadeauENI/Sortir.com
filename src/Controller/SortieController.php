@@ -170,8 +170,20 @@ class SortieController extends AbstractController
         $sorties_str = $repoS->findAllForDtTableSorties($id_site, $user->getId(), $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse);
         $sorties = array();
         foreach($sorties_str as $s){
+            $users = array();
             $sortie = $repoS->find($s["id"]);
-            array_push($sorties, $sortie);
+            foreach($sortie->getParticipants() as $u){
+                array_push($users, $u);
+            }
+            if($noninscrit == "true" && $inscrit != "true" && !in_array($user, $users)){
+                array_push($sorties, $sortie);
+            }
+            if($noninscrit != "true" && $inscrit == "true" && in_array($user, $users)){
+                array_push($sorties, $sortie);
+            }
+            if($noninscrit != "true" && $inscrit != "true"){
+                array_push($sorties, $sortie);
+            }
         }
 
         $utilisateurs = $repoU->findAll();
@@ -276,7 +288,7 @@ class SortieController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $user_session = $this->getUser();
         $user = $this->getDoctrine()->getRepository(Utilisateur::class)->find($user_session->getId());
-        if(!$sortie->getParticipants()->contains('id', $user->getID())){
+        if(!$sortie->getParticipants()->contains('id', $user->getId())){
             $sortie->removeParticipant($user);
             $em->persist($sortie);
             $em->flush();

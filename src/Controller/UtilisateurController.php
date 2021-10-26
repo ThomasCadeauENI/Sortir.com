@@ -10,6 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Service\FileUploader;
+use App\Form\FileUploadType;
+
+
 
 class UtilisateurController extends AbstractController
 {
@@ -18,6 +22,59 @@ class UtilisateurController extends AbstractController
         return $this->render('utilisateur/mon_profil.html.twig', [
             'controller_name' => 'UtilisateurController',
         ]);
+    }
+
+    /**
+     * @Route("/test_upload", name="test_upload")
+     */
+    public function excelCommunesAction(Request $request, FileUploader $file_uploader)
+    {
+        $form = $this->createForm(FileUploadType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $file = $form['upload_file']->getData();
+            if ($file)
+            {
+                $file_name = $file_uploader->upload($file);
+                if (null !== $file_name) // for example
+                {
+                    $directory = $file_uploader->getTargetDirectory();
+                    $full_path = $directory.'/'.$file_name;
+                    // Do what you want with the full path file...
+                    // Why not read the content or parse it !!!
+                }
+                else
+                {
+                    // Oups, an error occured !!!
+                }
+            }
+        }
+        return $this->render('utilisateur/ajout_utilisateurs.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+
+    /**
+     * @Route("/gestion_utilisateur", name="gestion_utilisateurs")
+     */
+    public function GestionUtilisateur(): Response
+    {
+        return $this->render('utilisateur/index.html.twig', [
+        ]);
+    }
+    /**
+     * @Route("/afficher_DtTableUtilisateurs", name="afficher_DtTableUtilisateurs")
+     */
+    public function DtTableUtilisateurs():Response
+    {
+        $em=$this->getDoctrine();
+        $repo = $em->getRepository(Utilisateur::class);
+        $users = $repo->findAll();
+        return $this->render('partialView/DtTableUtilisateurs.html.twig', [
+            'users' => $users
+            ]);
     }
 
     /**

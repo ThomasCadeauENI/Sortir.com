@@ -42,13 +42,13 @@ class SortieRepository extends ServiceEntityRepository
     {
         $conn = $this->getEntityManager()
             ->getConnection();
-        $sql = "select distinct id, id, id_ville_id, id_lieu_id, organisateur_id, date_sortie, date_fin_inscription, nb_place, duree, description, nom, etat, motif  from sortie s left join sortie_utilisateur su on s.id = su.sortie_id ";
+        $sql = "select distinct id, id_ville_id, id_lieu_id, organisateur_id, date_sortie, date_fin_inscription, nb_place, duree, description, nom, etat, motif  from sortie s left join sortie_utilisateur su on s.id = su.sortie_id ";
         $last_mois = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
         $where = "WHERE s.date_sortie > '".$last_mois."'";
 
         if($id_site!= ""|| $nom_sortie!=""|| ($start !="" && $end != "") || $orga== "true"||$inscrit== "true"||$noninscrit== "true"||$sortiesPasse== "true")
         {
-            $where .= " and ";
+            $where .= " and";
             if($sortiesPasse == "true"){
                 $where = "where ";
                 $where .= " s.date_sortie < DATE('now') and";
@@ -65,12 +65,12 @@ class SortieRepository extends ServiceEntityRepository
             if($orga == "true"){
                 $where .= " s.organisateur_id = ".$id_user."  and";
             }
-            if($inscrit == "true"){
+            /*if($inscrit == "true"){
                 $where .= " su.utilisateur_id = ".$id_user." and";
             }
             if($noninscrit == "true"){
                 $where .= " su.utilisateur_id <>".$id_user." and";
-            }
+            }*/
 
                 $where = substr($where,0,-3);
         }
