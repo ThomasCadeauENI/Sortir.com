@@ -12,7 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Form\SortieType;
@@ -115,20 +114,6 @@ class SortieController extends AbstractController
     }
 
     /**
-     * @Route ("/data_lieu/", name="data_lieu")
-     */
-    public function data_lieu(Request $request)
-    {
-        $id_lieu = $request->get('id_lieu');
-        $entityManager = $this->getDoctrine();
-        $repo = $entityManager->getRepository(Lieu::class);
-        $lieu = $repo->find($id_lieu);
-        $lieu->setIdVille(null);
-        return $this->json($lieu);
-        //return json_encode($lieu);
-    }
-
-    /**
      * @Route("/data_lieu", name="data_lieu")
      */
     public function lieu_json(Request $request)
@@ -147,6 +132,28 @@ class SortieController extends AbstractController
         $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
         $serializer = new Serializer([$normalizer], [$encoder]);
         $resultat = $serializer->serialize($lieu, 'json');
+        return new JsonResponse(json_decode($resultat));
+    }
+
+    /**
+     * @Route("/data_ville", name="data_ville")
+     */
+    public function ville_json(Request $request)
+    {
+        $id_ville = $request->get('id_ville');
+        $entityManager = $this->getDoctrine();
+        $repo = $entityManager->getRepository(Ville::class);
+        $ville = $repo->find($id_ville);
+
+        $encoder = new JsonEncoder();
+        $defaultContext = [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+                return $object->getId();
+            },
+        ];
+        $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
+        $serializer = new Serializer([$normalizer], [$encoder]);
+        $resultat = $serializer->serialize($ville, 'json');
         return new JsonResponse(json_decode($resultat));
     }
 

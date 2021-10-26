@@ -55,6 +55,33 @@ class UtilisateurController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/ajout_manuel_utilisateur", name="ajout_manuel_utilisateur")
+     */
+    public function ajoutManuelUtilisateur(Request $request, FileUploader $file_uploader)
+    {
+        $utilisateur = new Utilisateur();
+        $form = $this->createForm(UtilisateurType::class, $utilisateur);
+        $form->handleRequest($request);
+
+
+        if ($form->isSubmitted())
+        {
+            $role = [$request->request->get('utilisateur')['roles']];
+            $utilisateur->setRoles($role);
+
+            $pwd = ($request->get('utilisateur'))['password'];
+            $utilisateur->setPassword(password_hash($pwd, PASSWORD_DEFAULT));
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($utilisateur);
+            $em->flush();
+        }
+        return $this->render('utilisateur/ajout_utilisateur_manuel.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
 
     /**
      * @Route("/gestion_utilisateur", name="gestion_utilisateurs")
@@ -64,6 +91,7 @@ class UtilisateurController extends AbstractController
         return $this->render('utilisateur/index.html.twig', [
         ]);
     }
+
     /**
      * @Route("/afficher_DtTableUtilisateurs", name="afficher_DtTableUtilisateurs")
      */
@@ -90,7 +118,7 @@ class UtilisateurController extends AbstractController
         $repo = $entityManager->getRepository(Ville::class);
         $villes = $repo->findAll();
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() ) {
             $confirmPassword = ($request->get('utilisateur'))["ConfirmPassword"];
             $password = ($request->get('utilisateur'))['password'];
             $pseudo = ($request->get('utilisateur'))['pseudo'];
