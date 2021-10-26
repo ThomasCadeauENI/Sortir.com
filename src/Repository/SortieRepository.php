@@ -38,17 +38,21 @@ class SortieRepository extends ServiceEntityRepository
     /**
      * @return Sortie[] Returns an array of Sortie objects
      */
-    public function findAllForDtTableSorties($month, $year,$id_site, $id_user, $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse)
+    public function findAllForDtTableSorties($id_site, $id_user, $nom_sortie, $start,$end, $orga,$inscrit,$noninscrit,$sortiesPasse)
     {
         $conn = $this->getEntityManager()
             ->getConnection();
-        $sql = "select * from sortie s left join sortie_utilisateur su on s.id = su.sortie_id ";
-        $where = "WHERE strftime('%m', s.date_sortie) = '".$month."' 
-            and strftime('%Y', s.date_sortie) = '".$year."'";
+        $sql = "select distinct id, id, id_ville_id, id_lieu_id, organisateur_id, date_sortie, date_fin_inscription, nb_place, duree, description, nom, etat, motif  from sortie s left join sortie_utilisateur su on s.id = su.sortie_id ";
+        $last_mois = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
+        $where = "WHERE s.date_sortie > '".$last_mois."'";
 
         if($id_site!= ""|| $nom_sortie!=""|| ($start !="" && $end != "") || $orga== "true"||$inscrit== "true"||$noninscrit== "true"||$sortiesPasse== "true")
         {
-            $where = "where ";
+            $where .= " and ";
+            if($sortiesPasse == "true"){
+                $where = "where ";
+                $where .= " s.date_sortie < DATE('now') and";
+            }
             if($id_site != null){
                 $where .= " s.id_lieu_id = ".$id_site." and";
             }
@@ -56,7 +60,7 @@ class SortieRepository extends ServiceEntityRepository
                 $where .= " s.nom like '%".$nom_sortie."%' and";
             }
             if($start !=null && $end != null){
-                $where .= " s.date_sortie BETWEEN '".$start." 00:00:00' AND '".$end." 00:00:00' and";
+                $where .= " s.date_sortie BETWEEN '".$start." 00:00:00' AND '".$end." 23:59:59' and";
             }
             if($orga == "true"){
                 $where .= " s.organisateur_id = ".$id_user."  and";
@@ -67,13 +71,12 @@ class SortieRepository extends ServiceEntityRepository
             if($noninscrit == "true"){
                 $where .= " su.utilisateur_id <>".$id_user." and";
             }
-            if($sortiesPasse == "true"){
-                $where .= " s.date_sortie < DATE('now') and";
-            }
+
                 $where = substr($where,0,-3);
         }
 
         $sql = $sql . $where;
+        //dd($sql);
         $stmt = $conn->prepare($sql);
 
         return $stmt->execute()->fetchAll();

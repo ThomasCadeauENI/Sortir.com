@@ -3,7 +3,9 @@
 {% block body %}
     <div class="container mt-4">
         <div class="text-center mb-5"><h2>Afficher une sortie</h2></div>
-        <div class="text-center mb-5 text-danger"><h2>Sortie annulée ! </h2></div>
+        {% if sortie.etat == "Annulée" %}
+            <div class="text-center mb-5 text-danger"><h2>Sortie annulée ! </h2></div>
+        {% endif %}
         <div class="row col mb-5">
             <div class="col-6">
                 <div class="col mb-2">
@@ -103,9 +105,24 @@
         <strong>Liste des participants inscrits ({{ participants|length }}/{{ sortie.NbPlace }}):</strong>
         <div class="col-3" style="overflow: auto; height: 200px">
             <table class="table">
-                {% for p in participants %}
-                    {{ p.prenom }}
+                <thead>
+                    <tr>
+                        <td>Nom</td>
+                        <td>Prénom</td>
+                        <td>Pseudo</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in participants %}
+
+                        <tr>
+                            <td>{{ p.nom }}</td>
+                            <td>{{ p.prenom }}</td>
+                            <td>{{ p.pseudo }}</td>
+                        </tr>
+
                 {% endfor %}
+                </tbody>
             </table>
         </div>
     </div>

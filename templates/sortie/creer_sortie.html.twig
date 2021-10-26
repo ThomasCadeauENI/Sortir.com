@@ -3,14 +3,14 @@
 {% block body %}
 
     <div class="container mt-4">
-        <div class="text-center mb-5"><h2>Creer une sortie</h2></div>
-        <div class="row col mb-5">
-            {{ form_start(form) }}
+        <div class="text-center mb-5"><h2>Créer une sortie</h2></div>
+        <div class="row col-12 mb-5">
+            {{ form_start(form, { 'attr': {'class': 'col-12 row'} }) }}
             <div class="col-6">
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Nom de la sortie : </div>
-                        <div class="col-6">{{ form_widget(form.nom) }}</div>
+                        <div class="col-6">{{ form_widget(form.nom, { 'attr': {'class': 'form-control'} }) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
@@ -28,19 +28,19 @@
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Nombre de place : </div>
-                        <div class="col-6">{{ form_widget(form.nb_place) }}</div>
+                        <div class="col-6">{{ form_widget(form.nb_place, { 'attr': {'class': 'form-control'} }) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Durée : </div>
-                        <div class="col-6">{{ form_widget(form.duree) }}</div>
+                        <div class="col-6">{{ form_widget(form.duree, { 'attr': {'class': 'form-control'} }) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Descripiton et infos : </div>
-                        <div class="col-6">{{ form_widget(form.description) }}</div>
+                        <div class="col-6">{{ form_widget(form.description, { 'attr': {'class': 'form-control'} }) }}</div>
                     </div>
                 </div>
             </div>
@@ -48,37 +48,37 @@
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Ville : </div>
-                        <div class="col-6">{{ form_widget(form.id_ville) }}</div>
+                        <div class="col-6">{{ form_widget(form.id_ville, { 'attr': {'class': 'form-control'} }) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Lieu : </div>
-                        <div class="col-6">{{ form_widget(form.id_lieu) }}</div>
+                        <div class="col-6">{{ form_widget(form.id_lieu, { 'attr': {'class': 'form-control'} }) }}</div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Rue : </div>
-                        <div class="col-6">TODO</div>
+                        <div class="col-6"><p id="rue"></p></div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Code postal : </div>
-                        <div class="col-6">TODO</div>
+                        <div class="col-6"><p id="cdp"></p></div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Longitude : </div>
-                        <div class="col-6">TODO</div>
+                        <div class="col-6"><p id="lon"></p></div>
                     </div>
                 </div>
                 <div class="col mb-2">
                     <div class="row">
                         <div class="col-6">Latitude : </div>
-                        <div class="col-6">TODO</div>
+                        <div class="col-6" ><p id="lat"></p></div>
                     </div>
                 </div>
             </div>
@@ -89,5 +89,30 @@
             {{ form_end(form, {"render_rest":false}) }}
         </div>
     </div>
+    <script>
+        $( document ).ready(function() {
+            $.ajax({
+                url:"{{ path('data_lieu') }}",
+                data: { "id_lieu":$("#sortie_id_lieu").val()},
+                success: function(data) {
+                    $("#rue").html(data.rue);
+                    $("#cdp").html(data.codePostal);
+                    $("#lon").html(data.longitude);
+                    $("#lat").html(data.latitude);
+            }});
+        });
+        $("#sortie_id_lieu").change(function (){
+            $.ajax({
+                url:"{{ path('data_lieu') }}",
+                data: { "id_lieu":$("#sortie_id_lieu").val()},
+                success: function(data) {
+                    $("#rue").html(data.rue);
+                    $("#cdp").html(data.codePostal);
+                    $("#lon").html(data.longitude);
+                    $("#lat").html(data.latitude);            }});
+        });
 
+
+
+    </script>
 {% endblock %}

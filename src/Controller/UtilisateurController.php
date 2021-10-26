@@ -23,7 +23,7 @@ class UtilisateurController extends AbstractController
     /**
      * @Route("/utilisateur", name="mon_profil")
      */
-    public function updateMonProfil(Request $request, UserPasswordEncoderInterface $userPasswordEncoderInterface): Response
+    public function updateMonProfil(Request $request, UserPasswordEncoderInterface $userPasswordHasherInterface): Response
     {
         $utilisateur = $this->getUser();
         $form = $this->createForm(UtilisateurType::class, $utilisateur);
@@ -34,47 +34,53 @@ class UtilisateurController extends AbstractController
         $villes = $repo->findAll();
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $id = $utilisateur->getId();
+            $confirmPassword = ($request->get('utilisateur'))["ConfirmPassword"];
+            $password = ($request->get('utilisateur'))['password'];
+            $pseudo = ($request->get('utilisateur'))['pseudo'];
+            $prenom = ($request->get('utilisateur'))['prenom'];
+            $nom = ($request->get('utilisateur'))['nom'];
+            $num_tel = ($request->get('utilisateur'))['num_tel'];
+            $email = ($request->get('utilisateur'))['email'];
+            $id_ville = ($request->get('utilisateur'))["id_ville"];
 
-            $utilisateur = $entityManager->getRepository(Utilisateur::class)->find($id);
-
-            $confirmPassword = $request->get('ConfirmPassword');
-            $password = $request->get('password');
-            $pseudo = $request->get('pseudo');
-            $prenom = $request->get('prenom');
-            $nom = $request->get('nom');
-            $num_tel = $request->get('num_tel');
-            $email = $request->get('email');
-            $id_ville = $request->get('id_ville');
-
-            if(!$utilisateur){
-                throw $this->createNotFoundException(
-                    'No product found for id '.$id
-                );
-            }
-
-            $passwordHashed = $userPasswordEncoderInterface->encodePassword(
-                $utilisateur,
-                $form->get('password')->getData()
-            );
-
-            if($password == $confirmPassword && $utilisateur->getPassword()==$passwordHashed){
+            if ($password == $confirmPassword && $userPasswordHasherInterface->isPasswordValid($this->getUser(), $password)) {
                 $ville = $repo->find($id_ville);
-                $utilisateur -> setIdVille($ville);
+                $utilisateur->setIdVille($ville);
 
                 $utilisateur->setPseudo($pseudo);
                 $utilisateur->setPrenom($prenom);
                 $utilisateur->setNom($nom);
                 $utilisateur->setNumTel($num_tel);
                 $utilisateur->setEmail($email);
+
+                $name = $_FILES[$form->getName('photo')]['name'];
+                $tmp = $_FILES[$form->getName('photo')]['tmp_name'];
+
+                $nom = $name['photo'];
+                move_uploaded_file($tmp['photo'], $nom);
+                $utilisateur->setPhoto($nom);
+
+
+                $em = $this->getDoctrine()->getManager();
                 $em->persist($utilisateur);
                 $em->flush();
+                $this->addFlash('success', "L'utilisateur est modifié avec succès !");
+            }else{
+                $this->addFlash('danger', "Le mot de passe est incorrecte !");
             }
         }
         return $this->render('utilisateur/mon_profil.html.twig', [
             'form' => $form->createView(),
             'villes' => $villes,
+        ]);
+    }
+
+    /**
+     * @Route("/profil/{id}", name="profil")
+     */
+    public function monProfil(Utilisateur  $utilisateur): Response{
+        return $this->render('utilisateur/profil.html.twig', [
+            'user' => $utilisateur,
         ]);
     }
 }
