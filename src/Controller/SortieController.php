@@ -92,7 +92,9 @@ class SortieController extends AbstractController
         $ville = $this->getDoctrine()->getRepository(Ville::class)->find($lieu->getIdVille());
         $month_ago = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
         if($sortie->getDateSortie()->format('Y-m-d')< $month_ago){
+            $this->addFlash("danger", "La sortie date de plus d'un mois. Impossible a afficher");
             return $this->redirectToRoute('homepage');
+
         }
 
         /*
@@ -264,10 +266,9 @@ class SortieController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $sortie = $em->getRepository(Sortie::class)->find($request->get('id'));
         $user = $em->getRepository(Utilisateur::class)->find($this->getUser()->getId());
-        if($sortie->getOrganisateur()->getId() == $user->getId() && $user->getActif()) {
+        if(($sortie->getOrganisateur()->getId() == $user->getId() || $user->isGranted('ROLE_ADMIN')) && $user->getActif()) {
             $form = $this->createForm(SortieType::class, $sortie);
             $form->handleRequest($request);
-
             if ($form->isSubmitted()) {
                 $sortie->setEtat("Annulée");
                 $em->persist($sortie);
@@ -285,6 +286,7 @@ class SortieController extends AbstractController
             $this->addFlash("danger", "Vous n'êtes pas un utilisateur actif!");
             return $this->redirectToRoute('homepage');
         }
+        return $this->redirectToRoute('homepage');
     }
     /**
      * @Route ("/participer/{id}", requirements={"id"="\d+"}, name="participer_sortie")
@@ -295,7 +297,12 @@ class SortieController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         $user = $this->getDoctrine()->getRepository(Utilisateur::class)->find($user->getId());
-        if($user->getActif() && $sortie->getDateFinInscription()->format('d-m-Y') > date('d-m-Y')){
+        /*dump(new \DateTime());
+        dump($sortie->getDateFinInscription() );
+        dump(new \DateTime() <= $sortie->getDateFinInscription() );
+        dump();
+        dd(1);*/
+        if($user->getActif() && (new \DateTime() <= $sortie->getDateFinInscription() || date('d-m-Y') == $sortie->getDateFinInscription()->format('d-m-Y') )  ){
             if(count($sortie->getParticipants()) + 1 <= $sortie->getNbPlace()){
                 $sortie->addParticipant($user);
                 $em->persist($sortie);
@@ -305,7 +312,7 @@ class SortieController extends AbstractController
                 $this->addFlash('danger', 'Aucune place disponible pour la sortie : '. $sortie->getNom()."!");
 
             }
-        }elseif($sortie->getDateFinInscription()->format('d-m-Y') < date('d-m-Y')){
+        }elseif(new \DateTime() > $sortie->getDateFinInscription()){
             $this->addFlash("danger", "Vous ne pouvez plus vous inscrire!");
 
         }
@@ -313,6 +320,8 @@ class SortieController extends AbstractController
             $this->addFlash("danger", "Vous n'êtes pas un utilisateur actif!");
         }
 
+        //dd($sortie->getDateFinInscription()->format('d-m-Y'). " <  ".  date('d-m-Y'). " = ". ($sortie->getDateFinInscription()->format('d-m-Y') < date('d-m-Y')));
+        //dump($sortie->getDateFinInscription()->format('d-m-Y'). " >  ".  date('d-m-Y'). " = ". $sortie->getDateFinInscription()->format('d-m-Y') > date('d-m-Y'));
         return $this->redirectToRoute('homepage');
     }
 

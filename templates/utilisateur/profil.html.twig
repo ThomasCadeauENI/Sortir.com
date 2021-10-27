@@ -6,7 +6,11 @@
     <div class="">
         <div class="row">
             <div class="col-2">
-                <img style="border: 4px solid black; overflow: auto" src="/images/default_profil.png">
+                {% if user.photo != null %}
+                    <img style="border: 4px solid black;width: 100%; overflow: auto" src="/images/{{ user.photo }}">
+                {% else %}
+                    <img style="border: 4px solid black; overflow: auto;width: 100%" src="/images/default_profil.png">
+                {% endif %}
             </div>
             <div class="col-8" style="overflow: auto">
                 <div class="text-center"><h2>{{ user.pseudo }}</h2></div>

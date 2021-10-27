@@ -83,6 +83,7 @@ class UtilisateurController extends AbstractController
                 }
                 else
                 {
+                    $this->addFlash("danger", "Problème avc le fichier :/ ");
 
                 }
             }
@@ -104,15 +105,20 @@ class UtilisateurController extends AbstractController
 
         if ($form->isSubmitted())
         {
-            $role = [$request->request->get('utilisateur')['roles']];
-            $utilisateur->setRoles($role);
+            if($this->getDoctrine()->getRepository(Utilisateur::class)->findBy(["pseudo"=>$utilisateur->getPseudo()]) == null && !$this->getDoctrine()->getRepository(Utilisateur::class)->findBy(["email"=>$utilisateur->getEmail()]) == null) {
+                $role = [$request->request->get('utilisateur')['roles']];
+                $utilisateur->setRoles($role);
 
-            $pwd = ($request->get('utilisateur'))['password'];
-            $utilisateur->setPassword(password_hash($pwd, PASSWORD_DEFAULT));
+                $pwd = ($request->get('utilisateur'))['password'];
+                $utilisateur->setPassword(password_hash($pwd, PASSWORD_DEFAULT));
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($utilisateur);
-            $em->flush();
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($utilisateur);
+                $em->flush();
+                return $this->redirectToRoute("gestion_utilisateurs");
+            }else{
+                $this->addFlash("danger", "Un utilisateur possède le même email et/ou pseudo!");
+            }
         }
         return $this->render('utilisateur/ajout_utilisateur_manuel.html.twig', [
             'form' => $form->createView(),
@@ -209,7 +215,7 @@ class UtilisateurController extends AbstractController
 
                 $tmp = $form->get('ImportPhoto')->getData();
                 $newPath =  "../public/images/";
-                $nomPhoto = $tmp->getClientOriginalName();
+                $nomPhoto = uniqid().$tmp->getClientOriginalName();
                 $pathName = $tmp->getPath().'/'.$nomPhoto;
 
                 $tmp->move(

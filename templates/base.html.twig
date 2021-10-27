@@ -3,8 +3,6 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Sortie{% endblock %}</title>
-        {# Run `composer require symfony/webpack-encore-bundle`
-           and uncomment the following Encore helpers to start using Symfony UX #}
         {% block stylesheets %}
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
             <style>
@@ -59,55 +57,15 @@
                     }
                 }
             </style>
-            {#{{ encore_entry_link_tags('app') }}#}
         {% endblock %}
 
         {% block javascripts %}
-            {#{{ encore_entry_script_tags('app') }}#}
             <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>            <script src="{{ asset('js/jquery.js') }}"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         {% endblock %}
     </head>
     <body>
-  {#   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{{ path('homepage') }}"><img style="width: 75%" src="{{ asset('images/logo.png') }}"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <div style="position: fixed; right: 0;">
-                <ul class="navbar-nav ms-auto">
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="ville/">Villes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="lieu/">Sites</a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('homepage') }}">Accueil</a>
-                    </li>
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('profil') }}">Mon profil</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
-                        </li>
-                    {% endif %}
-
-                </ul>
-            </div>
-        </div>
-    </nav>
-    #}
   <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center mb-3">
       <div class="">
           <div class="navbar" style="background:transparent!important;">
@@ -121,17 +79,6 @@
                 <img src="https://see.fontimg.com/api/renderfont4/OVEa6/eyJyIjoiZnMiLCJoIjo2NSwidyI6MTAwMCwiZnMiOjY1LCJmZ2MiOiIjRkZGRkZGIiwiYmdjIjoiI0ZGRkZGRiIsInQiOjF9/U09SVElSLkNPTQ/edge-of-the-galaxy-regular.png" alt="Space fonts">
               </a>
           </div>
-          {# <a href="{{ path('homepage') }}" class="navbar-brand d-flex w-50 me-auto">
-
-
-              <div style="position: relative;" class="mt-4 ml-3">
-                  <div style="position: absolute;">
-                  </div>
-
-              </div>
-
-          </a>
-          #}
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsingNavbar3">
               <span class="navbar-toggler-icon"></span>
           </button>
