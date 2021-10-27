@@ -295,7 +295,7 @@ class SortieController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         $user = $this->getDoctrine()->getRepository(Utilisateur::class)->find($user->getId());
-        if($user->getActif()){
+        if($user->getActif() && $sortie->getDateFinInscription()->format('d-m-Y') > date('d-m-Y')){
             if(count($sortie->getParticipants()) + 1 <= $sortie->getNbPlace()){
                 $sortie->addParticipant($user);
                 $em->persist($sortie);
@@ -305,7 +305,11 @@ class SortieController extends AbstractController
                 $this->addFlash('danger', 'Aucune place disponible pour la sortie : '. $sortie->getNom()."!");
 
             }
-        }else{
+        }elseif($sortie->getDateFinInscription()->format('d-m-Y') < date('d-m-Y')){
+            $this->addFlash("danger", "Vous ne pouvez plus vous inscrire!");
+
+        }
+        else{
             $this->addFlash("danger", "Vous n'êtes pas un utilisateur actif!");
         }
 
