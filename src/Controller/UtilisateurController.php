@@ -207,13 +207,16 @@ class UtilisateurController extends AbstractController
                 $utilisateur->setNumTel($num_tel);
                 $utilisateur->setEmail($email);
 
-                $name = $_FILES[$form->getName('photo')]['name'];
-                $tmp = $_FILES[$form->getName('photo')]['tmp_name'];
+                $tmp = $form->get('ImportPhoto')->getData();
+                $newPath =  "../public/images/";
+                $nomPhoto = $tmp->getClientOriginalName();
+                $pathName = $tmp->getPath().'/'.$nomPhoto;
 
-                $nom = $name['photo'];
-                move_uploaded_file($tmp['photo'], $nom);
-                $utilisateur->setPhoto($nom);
-
+                $tmp->move(
+                    $newPath,
+                    $pathName
+                );
+                $utilisateur->setPhoto($nomPhoto);
 
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($utilisateur);

@@ -44,7 +44,8 @@ class UtilisateurType extends AbstractType
                 'required' => true
             ])
             ->add('num_tel', TelType::class)
-            ->add('photo', FileType::class,  [
+            ->add('ImportPhoto', FileType::class,  [
+                'mapped' => false,
                 'required' => false
             ])
             ->add('id_ville',EntityType::class, [

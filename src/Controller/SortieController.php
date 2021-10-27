@@ -8,7 +8,6 @@ use App\Entity\Utilisateur;
 use App\Entity\Ville;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Monolog\Handler\Curl\Util;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,17 +57,17 @@ class SortieController extends AbstractController
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
         $user = $this->getDoctrine()->getRepository(Utilisateur::class)->find($this->getUser()->getId());
-        if($user->getActif()){
+        if($user->getActif()) {
             if ($form->isSubmitted()) {
 
                 $orga_session = $this->getUser()->getUsername();
                 $organisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findOneBy(array('email' => $orga_session));
-                $sortie->setOrganisateur($user);
+                $sortie->setOrganisateur($organisateur);
                 $sortie->setEtat('En creation');
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($sortie);
                 $em->flush();
-                $this->addFlash("success", "La sortie ".$sortie->getNom(). " prévue pour le ".$sortie->getDateSortie()->format("d/m/Y")." a bien été créé");
+                $this->addFlash("success", "La sortie " . $sortie->getNom() . " prévue pour le " . $sortie->getDateSortie()->format("d/m/Y") . " a bien été créé");
                 return $this->redirectToRoute('homepage');
             }
 
@@ -79,8 +78,6 @@ class SortieController extends AbstractController
             $this->addFlash("danger", "Vous n'êtes pas considéré comme un utilisateur actif !");
             return $this->redirectToRoute('homepage');
         }
-
-
     }
 
 
@@ -142,6 +139,7 @@ class SortieController extends AbstractController
         $resultat = $serializer->serialize($lieu, 'json');
         return new JsonResponse(json_decode($resultat));
     }
+
     /**
      * @Route("/data_ville", name="data_ville")
      */
