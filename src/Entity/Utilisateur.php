@@ -182,7 +182,7 @@ class Utilisateur implements UserInterface
 
     public function setNom(string $nom): self
     {
-        $this->prenom = $nom;
+        $this->nom = $nom;
 
         return $this;
     }

@@ -5,13 +5,21 @@
 {% block body %}
 <div class="">
     <div class="row">
-        <div class="col-2">
-            <img style="border: 4px solid black; overflow: auto" src="/images/{{ user.photo }}">
-        </div>
+        {{ form_start(form,{'attr': {'class': 'col-12 row'}}) }}
+        {% if app.user.photo != null %}
+            <div class="col-2 ml-5 mt-5">
+                <img src="{{ asset('images/') }}{{ app.user.photo }}">
+                {{ form_widget(form.ImportPhoto, {'attr': {'class': 'mt-4'}})}}
+            </div>
+        {% else %}
+            <div class="col-2 ml-5 mt-5">
+                <img class="mb-3" style="border: 4px solid black; overflow: auto; width: 100%" src="/images/default_profil.png">
+                {{ form_widget(form.ImportPhoto, {'attr': {'class': 'mt-4'}})}}
+            </div>
+        {% endif %}
         <div class="col-8" style="overflow: auto">
             <div class="text-center"><h2>Mon profil</h2></div>
             <div class="col-md-6 offset-md-3 ">
-                {{ form_start(form) }}
                 <div class="row mb-2">
                     <div class="col">Mon pseudo : </div>
                     <div class="col">{{ form_widget(form.pseudo, {'attr': {'class': 'form-control'}}) }}</div>
