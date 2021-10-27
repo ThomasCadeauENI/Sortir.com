@@ -8,9 +8,9 @@
         <strong>Date du jour : {{date }}</strong>
         <strong>Participant(e) : {{ app.user.pseudo }}</strong>
     </div>
+    <strong>Filtrer les sorties</strong>
     <div class="row">
         <div class="col-6" style="overflow: auto">
-            <strong>Filtrer les sorties</strong>
             <div>
                 <div class="row mb-3" style="white-space: nowrap;">
                     <div class="col">Site : </div>
@@ -27,19 +27,14 @@
                     <div class="col">Le nom de la sortie contient : </div>
                     <div class="col"><input type="text" class="form-control" id="search"></div>
                 </div>
-                <div class="col  mb-3" style="white-space: nowrap;">
-                    <div class="row">
-                        <div class="col">
-                            <div class="row">
-                                <p>Entre :</p>
-                                <input type="date" class="form-control" style="width:75%" id="start" name="trip-start">
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="row">
-                                <p> et </p>
-                                <input type="date" class="form-control" style="width:75%" id="end" name="trip-end"></div>
-                        </div>
+                <div class="row mb-3" style="white-space: nowrap;">
+                    <div class="col">Entre : </div>
+                    <div class="col"><input type="date" class="form-control" style="" id="start" name="trip-start"></div>
+                </div>
+                <div class="row mb-3" style="white-space: nowrap;">
+                    <div class="col">et </div>
+                    <div class="col">
+                        <input type="date" class="form-control" style="" id="end" name="trip-end">
                     </div>
                 </div>
             </div>
@@ -78,19 +73,27 @@
 
     </div>
     {% if is_granted('ROLE_ORGA') %}
-        <div class="col-2">
+        <div class="col">
             <a href="{{ path('creer') }}"> <button class="button btn-primary btn-lg mt-4">Créer une sortie </button> </a>        </div>
     {% endif %}
 </div>
 <script>
     $( document ).ready(function() {
+        myDT();
+    });
+
+
+    function myDT(){
         $.ajax({
             url:"{{ path('afficher_DtTableSorties') }}",
             success: function(data) {
-               $("#dtTable").html(data);
+                $("#dtTable").html(data);
             }
         });
-    });
+
+
+    }
+
     function rechercher(){
         var id_site = $("#site").val();
         var nom_sortie = $("#search").val();

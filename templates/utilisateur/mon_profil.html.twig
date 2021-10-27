@@ -66,7 +66,7 @@
     <div class="col text-center"><button class="btn btn-primary btn-lg btn-success">Enregistrer</button></div>
     <div class="col text-center"><button type="reset" class="btn btn-primary btn-lg btn-danger" onclick="window.location='{{ path('homepage') }}'">Annuler</button></div>
 </div>
-    {{ form_end(form) }}
+    {{ form_end(form, {"render_rest":false}) }}
 <script>
 
     $( document ).ready(function() {

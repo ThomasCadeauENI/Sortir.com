@@ -5,11 +5,16 @@ namespace App\Controller;
 use App\Entity\Utilisateur;
 use App\Entity\Ville;
 use App\Form\UtilisateurType;
+use SplFileObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Service\FileUploader;
+use App\Form\FileUploadType;
+
+
 
 class UtilisateurController extends AbstractController
 {
@@ -18,6 +23,155 @@ class UtilisateurController extends AbstractController
         return $this->render('utilisateur/mon_profil.html.twig', [
             'controller_name' => 'UtilisateurController',
         ]);
+    }
+
+    /**
+     * @Route("/test_upload", name="test_upload")
+     */
+    public function excelCommunesAction(Request $request, FileUploader $file_uploader)
+    {
+        $form = $this->createForm(FileUploadType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $file = $form['upload_file']->getData();
+
+            if ($file)
+            {
+                $file_name = $file_uploader->upload($file);
+                if (null !== $file_name) // for example
+                {
+                    $directory = $file_uploader->getTargetDirectory();
+                    $full_path = $directory.'/'.$file_name;
+                    $rowNo = 1;
+                    // $fp is file pointer to file sample.csv
+                    if (($fp = fopen($full_path, "r")) !== FALSE) {
+                        while (($row = fgetcsv($fp, 1000, ";")) !== FALSE) {
+                            $entityManager = $this->getDoctrine();
+                            $repoV = $entityManager->getRepository(Ville::class);
+                            $repoU = $entityManager->getRepository(Utilisateur::class);
+                            if(count($row) == 3 && $row[0]!="nom"&&$row[1]!="prenom"&&$row[2]!="ville" ){
+                                if($repoU->findBy(["nom"=>$row[0], "prenom"=>$row[1]]) == null){
+                                    $user = new Utilisateur();
+                                    $user->setNom($row[0]);
+                                    $user->setPrenom($row[1]);
+                                    $ville= $repoV->find($row[2]);
+                                    $user->setIdVille($ville);
+                                    $user->setActif(true);
+                                    $user->setEmail($user->getPrenom().".".$user->getNom().date('Y')."@campus-zabi.fr");
+                                    $user->setPseudo(substr($user->getPrenom(), 0, 1).$user->getNom());
+                                    //user password 1er lettre prenom + 1er lettre nom + annee d'enregistrement
+                                    $user->setPassword(password_hash(substr($user->getPrenom(), 0, 1).substr($user->getNom(), 0, 1).date('Y'), PASSWORD_BCRYPT));
+
+                                    $em = $this->getDoctrine()->getManager();
+                                    $em->persist($user);
+                                    $em->flush();
+                                    $rowNo++;
+                                    $this->addFlash("success", "Utilisateur ".$user->getNom()." ".$user->getPrenom()." enregistré !");
+                                }
+
+                            }
+
+                        }
+                        fclose($fp);
+                        unlink($full_path);
+                        if($rowNo == 1){
+                            $this->addFlash("danger", "Aucun utilisateur créé! ");
+                        }
+                        return $this->redirectToRoute('gestion_utilisateurs');
+                    }
+                }
+                else
+                {
+
+                }
+            }
+        }
+        return $this->render('utilisateur/ajout_utilisateurs.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/ajout_manuel_utilisateur", name="ajout_manuel_utilisateur")
+     */
+    public function ajoutManuelUtilisateur(Request $request, FileUploader $file_uploader)
+    {
+        $utilisateur = new Utilisateur();
+        $form = $this->createForm(UtilisateurType::class, $utilisateur);
+        $form->handleRequest($request);
+
+
+        if ($form->isSubmitted())
+        {
+            $role = [$request->request->get('utilisateur')['roles']];
+            $utilisateur->setRoles($role);
+
+            $pwd = ($request->get('utilisateur'))['password'];
+            $utilisateur->setPassword(password_hash($pwd, PASSWORD_DEFAULT));
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($utilisateur);
+            $em->flush();
+        }
+        return $this->render('utilisateur/ajout_utilisateur_manuel.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+
+    /**
+     * @Route("/gestion_utilisateur", name="gestion_utilisateurs")
+     */
+    public function GestionUtilisateur(): Response
+    {
+        return $this->render('utilisateur/index.html.twig', [
+        ]);
+    }
+
+    /**
+     * @Route("/remove_user", name="remove_user")
+     */
+    public function Remove(Request $request): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $id = $request->get('id');
+        $user = $entityManager->getRepository(Utilisateur::class)->find($id);
+        if($user){
+            $entityManager->remove($user);
+            $entityManager->flush();
+            $this->addFlash("success", "Suppression de l'utilisateur ". $user->getPseudo(). "réussi !");
+        }
+
+        return $this->redirect('gestion_utilisateur');
+    }
+    /**
+     * @Route("/toggleActif", name="toggleActif")
+     */
+    public function toggleActif(Request $request): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $id = $request->get('id');
+        $user = $entityManager->getRepository(Utilisateur::class)->find($id);
+        if($user)
+        {
+            $user->setActif(!$user->getActif());
+            $entityManager->flush();
+        }
+        return $this->redirect('gestion_utilisateur');
+
+    }
+    /**
+     * @Route("/afficher_DtTableUtilisateurs", name="afficher_DtTableUtilisateurs")
+     */
+    public function DtTableUtilisateurs():Response
+    {
+        $em=$this->getDoctrine();
+        $repo = $em->getRepository(Utilisateur::class);
+        $users = $repo->findAll();
+        return $this->render('partialView/DtTableUtilisateurs.html.twig', [
+            'users' => $users
+            ]);
     }
 
     /**
@@ -33,7 +187,7 @@ class UtilisateurController extends AbstractController
         $repo = $entityManager->getRepository(Ville::class);
         $villes = $repo->findAll();
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() ) {
             $confirmPassword = ($request->get('utilisateur'))["ConfirmPassword"];
             $password = ($request->get('utilisateur'))['password'];
             $pseudo = ($request->get('utilisateur'))['pseudo'];
