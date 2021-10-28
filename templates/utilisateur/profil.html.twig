@@ -5,9 +5,15 @@
 {% block body %}
     <div class="">
         <div class="row">
-            <div class="col-2">
+            {% if user.photo != null %}
+            <div class="col-2 ml-5 mt-5">
+                <img src="{{ asset('images/') }}{{ user.photo }}">
+            </div>
+            {% else %}
+            <div class="col-2 ml-5 mt-5">
                 <img style="border: 4px solid black; overflow: auto" src="/images/default_profil.png">
             </div>
+            {% endif %}
             <div class="col-8" style="overflow: auto">
                 <div class="text-center"><h2>{{ user.pseudo }}</h2></div>
                 <div class="col-md-6 offset-md-3 ">
@@ -35,7 +41,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-6 offset-md-3 row">
             <div class="col text-center"><button class="btn btn-primary btn-lg" onclick="window.location='{{ path('homepage') }}'">Retour</button></div>
         </div>
