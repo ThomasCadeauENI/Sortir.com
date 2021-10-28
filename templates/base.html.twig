@@ -3,63 +3,82 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Sortie{% endblock %}</title>
-        {# Run `composer require symfony/webpack-encore-bundle`
-           and uncomment the following Encore helpers to start using Symfony UX #}
         {% block stylesheets %}
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+            <style>
+                .navbar {
+                    background:black url(http://fc01.deviantart.net/fs71/f/2012/160/b/9/stars_by_paulinemoss-d52un4e.jpg);
+                    animation: stars 205s linear alternate;
+                    color: #FFFFFF;
+                }
 
-            {#{{ encore_entry_link_tags('app') }}#}
+                #box {
+                    background:url(https://cdn.rawgit.com/ManzDev/cursos-assets/gh-pages/css3/earth-2.jpg);
+                    background-size:cover;
+                    border-radius:50%;
+                    width:100px;
+                    height:100px;
+                    animation: movimiento 5s linear 0s infinite;
+                    box-shadow:0 0 25px RGBA(255,255,255, 0.10),
+
+                    2px 2px 25px #fff,
+                    -45px -45px 25px RGBA(0,0,0, 0.5) inset,
+                    25px 25px 45px RGBA(0,0,0, 0.45) inset;
+                    margin:6em auto;
+                    transform:rotateX(6deg) rotateY(6deg) rotateZ(6deg);
+                }
+
+                @keyframes movimiento {
+                0% { background-position:0 0 }
+                100% { background-position:355px 0 }
+                }
+
+                @keyframes stars {
+                0% { background-position:0 0 }
+                100% { background-position:0 100% }
+                }
+
+                #pot {
+                    bottom: 15%;
+                    position: absolute;
+                    -webkit-animation: linear infinite;
+                    -webkit-animation-name: run;
+                    -webkit-animation-duration: 5s;
+                }
+                @-webkit-keyframes run {
+                    0% {
+                        left: 0;
+                    }
+                    50% {
+                        left: 100%;
+                    }
+                    100% {
+                        left: 0;
+                    }
+                }
+            </style>
         {% endblock %}
 
         {% block javascripts %}
-            {#{{ encore_entry_script_tags('app') }}#}
             <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>            <script src="{{ asset('js/jquery.js') }}"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         {% endblock %}
     </head>
     <body>
-  {#   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{{ path('homepage') }}"><img style="width: 75%" src="{{ asset('images/logo.png') }}"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <div style="position: fixed; right: 0;">
-                <ul class="navbar-nav ms-auto">
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="ville/">Villes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="lieu/">Sites</a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('homepage') }}">Accueil</a>
-                    </li>
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('profil') }}">Mon profil</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
-                        </li>
-                    {% endif %}
-
-                </ul>
-            </div>
-        </div>
-    </nav>
-    #}
-  <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center">
-      <div class="container">
-          <a href="{{ path('homepage') }}" class="navbar-brand d-flex w-50 me-auto"><img style="width: 50%" alt="Sortir.com" src="{{ asset('images/logo.png') }}"></a>
+  <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center mb-3">
+      <div class="">
+          <div class="navbar" style="background:transparent!important;">
+              <a href="{{ path('homepage') }}">
+                <div id="box" class="m-0 mt-2 mr-2"></div>
+              </a>
+              <a href="{{ path("homepage") }}">
+                <div id="pot"><img src="{{ asset("images/plane.jpg")}}" width=100px height=100px></div>
+              </a>
+              <a href="{{ path('homepage') }}">
+                <img src="https://see.fontimg.com/api/renderfont4/OVEa6/eyJyIjoiZnMiLCJoIjo2NSwidyI6MTAwMCwiZnMiOjY1LCJmZ2MiOiIjRkZGRkZGIiwiYmdjIjoiI0ZGRkZGRiIsInQiOjF9/U09SVElSLkNPTQ/edge-of-the-galaxy-regular.png" alt="Space fonts">
+              </a>
+          </div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsingNavbar3">
               <span class="navbar-toggler-icon"></span>
           </button>
@@ -67,28 +86,28 @@
               <ul class="nav navbar-nav ms-auto w-100 justify-content-end">
                   {% if is_granted('ROLE_ADMIN') %}
                       <li class="nav-item">
-                          <a class="nav-link" href="{{ path('gestion_utilisateurs') }}">Utilisateurs</a>
+                          <a style="color: #FFFFFF" class="nav-link" href="{{ path('gestion_utilisateurs') }}">Utilisateurs</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link" href="{{ path('gestion_ville') }}">Villes</a>
+                          <a style="color: #FFFFFF" class="nav-link" href="{{ path('gestion_ville') }}">Villes</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link" href="{{ path('gestion_lieu') }}">Sites</a>
+                          <a style="color: #FFFFFF" class="nav-link" href="{{ path('gestion_lieu') }}">Sites</a>
                       </li>
                   {% endif %}
                   <li class="nav-item">
-                      <a class="nav-link" href="{{ path('homepage') }}">Accueil</a>
+                      <a style="color: #FFFFFF" class="nav-link" href="{{ path('homepage') }}">Accueil</a>
                   </li>
                   {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                       <li class="nav-item">
-                          <a class="nav-link" href="{{ path('mon_profil') }}">Mon profil</a>
+                          <a style="color: #FFFFFF" class="nav-link" href="{{ path('mon_profil') }}">Mon profil</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
+                          <a style="color: #FFFFFF" class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
                       </li>
                   {% else %}
                       <li class="nav-item">
-                          <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
+                          <a style="color: #FFFFFF" class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
                       </li>
                   {% endif %}
               </ul>

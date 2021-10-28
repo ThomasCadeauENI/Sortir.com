@@ -34,10 +34,12 @@
                 {% if sortie.etat != "En creation" %}
                     {% if ((sortie.Organisateur.id == app.user.id or is_granted('ROLE_ADMIN')) and sortie.etat != "Annulée") %}
                         <a href="{{  path('annuler_sortie',{ 'id': sortie.id })  }}"> - Annuler</a>
-                    {% elseif sortie.etat != "En création" and sortie.etat != "Annulée" and date(sortie.dateFinInscription) > date() and user not in sortie.Participants%}
+                    {% endif %}
+                    {% if sortie.etat != "En création" and sortie.etat != "Annulée" and "now" <= sortie.dateFinInscription and user not in sortie.Participants
+                        and sortie.Participants|length != sortie.nbPlace%}
                         -
                         <a href="{{ path('participer_sortie',{ 'id': sortie.id }) }}">S'inscrire</a>
-                    {% elseif sortie.etat != "En création" and sortie.etat != "Annulée" and  date(sortie.dateSortie) > date()
+                    {% elseif sortie.etat != "En création" and sortie.etat != "Annulée" and  "now" <= sortie.dateSortie
                         and user in sortie.Participants
                     %}
                          -
