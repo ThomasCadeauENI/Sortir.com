@@ -214,15 +214,17 @@ class UtilisateurController extends AbstractController
                 $utilisateur->setEmail($email);
 
                 $tmp = $form->get('ImportPhoto')->getData();
-                $newPath =  "../public/images/";
-                $nomPhoto = uniqid().$tmp->getClientOriginalName();
-                $pathName = $tmp->getPath().'/'.$nomPhoto;
+                if($tmp != null){
+                    $newPath =  "../public/images/";
+                    $nomPhoto = uniqid().$tmp->getClientOriginalName();
+                    $pathName = $tmp->getPath().'/'.$nomPhoto;
 
-                $tmp->move(
-                    $newPath,
-                    $pathName
-                );
-                $utilisateur->setPhoto($nomPhoto);
+                    $tmp->move(
+                        $newPath,
+                        $pathName
+                    );
+                    $utilisateur->setPhoto($nomPhoto);
+                }
 
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($utilisateur);
